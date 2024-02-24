@@ -422,6 +422,14 @@
                         console.log('Connection to ROSBridge established!')
 
                         this.todo()
+                        // try{
+
+                        //     this.store = JSON.parse(localStorage.getItem("positions"));
+                        // }
+                        // catch
+                        // {
+                        //     localStorage.setItem("positions", JSON.stringify(this.store));
+                        // }
 
                     })
                     this.ros.on('error', (error) => {
@@ -433,7 +441,6 @@
                         this.connected = false
                         console.log('Connection to ROSBridge was closed!')
                     })
-                    this.store = JSON.parse(localStorage.getItem("positions"));
                 },
                 disconnect: function () {
                     this.ros.close()
@@ -516,28 +523,27 @@
                     this.store.push(item)
                     localStorage.setItem("positions", JSON.stringify(this.store));
                 },
-
                 docycle: function () {
-                    this.store = JSON.parse(localStorage.getItem("positions"));
+                    // this.store = JSON.parse(localStorage.getItem("positions"));
                     for (pos in this.store) {
-                        console.log(pos)
-                        send(pos)
-                        while (this.reach(pos));
-                        sleep(1000);
+                        console.log(this.store[pos])
+                        this.send2(this.store[pos])
+                        while (this.reach(this.store[pos]));
+                        this.sleep(1000);
                     }
                 },
                 reach: function (target) {
-                    if (cposition.Joint1 != target.joint1)
+                    if (this.cposition.Joint1 != target.joint1)
                         return false;
-                    if (cposition.Joint2 != target.joint2)
+                    if (this.cposition.Joint2 != target.joint2)
                         return false;
-                    if (cposition.Joint3 != target.joint3)
+                    if (this.cposition.Joint3 != target.joint3)
                         return false;
-                    if (cposition.Joint4 != target.joint4)
+                    if (this.cposition.Joint4 != target.joint4)
                         return false;
-                    if (cposition.Joint5 != target.joint5)
+                    if (this.cposition.Joint5 != target.joint5)
                         return false;
-                    if (cposition.Joint6 != target.joint6)
+                    if (this.cposition.Joint6 != target.joint6)
                         return false;
                     return true;
                 },
@@ -621,7 +627,7 @@
                     this.addItem()
 
                 },
-                send: function (target) {
+                send2: function (target) {
                     var cmdVel = new ROSLIB.Topic({
                         ros: this.ros,
                         name: "/arm/command",
