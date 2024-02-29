@@ -1,5 +1,3 @@
-var ros = new ROSLIB.Ros();
-
 const app = Vue.createApp({
 
     el: "#app",
@@ -11,23 +9,30 @@ const app = Vue.createApp({
             connected: false,
             error: false,
             // subscriber data
-            position: [0, 0, 0, 0, 0, 0],
-            j1: 0,
-            j2: 0,
-            j3: 0,
-            j4: 0,
-            j5: 0,
-            j6: 0,
+            cposition: {
+                Joint1: 0.0,
+                Joint2: 0.0,
+                Joint3: 0.0,
+                Joint4: 0.0,
+                Joint5: 0.0,
+                Joint6: 0.0,
+            },
+
+            j1: 0.00,
+            j2: 0.00,
+            j3: 0.00,
+            j4: 0.00,
+            j5: 0.00,
+            j6: 0.00,
+            delay: 0,
+            title: '',
             history: [],
-            
-            // history: [{
-            //     joint1: this.j1, joint1: this.j2,
-            //      joint3: this.j3, joint1: this.j4, 
-            //      joint5: this.j5, joint1: this.j6
-            // }],
-            // page content
             menu_title: 'Connection',
             main_title: 'Main title, from Vue!!',
+            keyValue: 'A',
+            speed: 100,
+            store: [],
+            catTitle: '',
         }
     },
     methods: {
@@ -42,7 +47,7 @@ const app = Vue.createApp({
                 this.connected = true
                 console.log('Connection to ROSBridge established!')
 
-                this.showPosition()
+                this.todo()
 
             })
             this.ros.on('error', (error) => {
@@ -54,37 +59,25 @@ const app = Vue.createApp({
                 this.connected = false
                 console.log('Connection to ROSBridge was closed!')
             })
+            this.showData()
+        },
+        showData: function () {
+            this.catTitle = document.getElementById('catTitle').value;
+            if (localStorage.getItem(this.catTitle) === null) {
+
+                localStorage.setItem(this.catTitle, JSON.stringify(this.store));
+            }
+            else {
+                this.store = JSON.parse(localStorage.getItem(this.catTitle));
+            }
         },
         disconnect: function () {
             this.ros.close()
         },
-        sendCommand: function () {
-            let topic = new ROSLIB.Topic({
-                ros: this.ros,
-                name: 'arm/command',
-                messageType: 'sensor_msgs/msg'
-            })
-            let message = new ROSLIB.Message({
-                linear: { x: 1, y: 0, z: 0, },
-                angular: { x: 0, y: 0, z: 0.5, },
-            })
-            topic.publish(message)
-        },
-        turnRight: function () {
-            let topic = new ROSLIB.Topic({
-                ros: this.ros,
-                name: '/cmd_vel',
-                messageType: 'geometry_msgs/Twist'
-            })
-            let message = new ROSLIB.Message({
-                linear: { x: 1, y: 0, z: 0, },
-                angular: { x: 0, y: 0, z: -0.5, },
-            })
-            topic.publish(message)
-        },
+
         Stop: function () {
             var cmdVel = new ROSLIB.Topic({
-                ros: ros,
+                ros: this.ros,
                 name: "/arm/stop",
                 messageType: "std_msgs/msg/String",
             });
@@ -96,7 +89,7 @@ const app = Vue.createApp({
         },
         Disengage: function () {
             var cmdVel = new ROSLIB.Topic({
-                ros: ros,
+                ros: this.ros,
                 name: "/arm/disengage",
                 messageType: "std_msgs/msg/String",
             });
@@ -120,37 +113,109 @@ const app = Vue.createApp({
 
             this.$refs.table.scrollIntoView({ block: "end" });
         },
+
+        Save: function (delayafter) {
+
+            let item = {
+                joint1: this.j1,
+                joint2: this.j2,
+                joint3: this.j3,
+                joint4: this.j4,
+                joint5: this.j5,
+                joint6: this.j6,
+                speed: this.speed,
+                delay: this.delay,
+                title: this.title,
+            }
+            // let positions = localStorage.getItem("positions");
+            // positions.addItem(item);
+            this.store.push(item)
+            localStorage.setItem(this.catTitle, JSON.stringify(this.store));
+        },
+
+        Delete: function (index) {
+            // this.store.splice(this.store.indexOf(index), 1);  
+            this.store.splice(index, 1);
+            localStorage.setItem(this.catTitle, JSON.stringify(this.store));
+        },
+        docycle: function () {
+            this.store = JSON.parse(localStorage.getItem(this.catTitle));
+            for (pos in this.store) {
+                console.log(pos)
+                send(pos)
+                while (this.reach(pos));
+                sleep(pos.delay * 1000);
+            }
+        },
+        reach: function (target) {
+            if (cposition.Joint1 != target.joint1)
+                return false;
+            if (cposition.Joint2 != target.joint2)
+                return false;
+            if (cposition.Joint3 != target.joint3)
+                return false;
+            if (cposition.Joint4 != target.joint4)
+                return false;
+            if (cposition.Joint5 != target.joint5)
+                return false;
+            if (cposition.Joint6 != target.joint6)
+                return false;
+            return true;
+        },
+        sleep(milliseconds) {
+            return new Promise((resolve) => setTimeout(resolve, milliseconds));
+        },
+        currentPosition: function () {
+            this.j1 = Math.round(this.cposition.Joint1)
+            this.j2 = Math.round(this.cposition.Joint2)
+            this.j3 = Math.round(this.cposition.Joint3)
+            this.j4 = Math.round(this.cposition.Joint4)
+            this.j5 = Math.round(this.cposition.Joint5)
+            this.j6 = Math.round(this.cposition.Joint6)
+        },
         showPosition: function () {
             var listener = new ROSLIB.Topic({
-                ros: ros,
+                ros: this.ros,
                 name: "/arm/state",
                 messageType: "sensor_msgs/msg/JointState",
             });
+            listener.subscribe((message) => {
+                //    this.cposition= listener.subscribe(function (message) {
 
-            listener.subscribe(function (message) {
-
-                var poses = message.position;
-                // console.log(poses);
+                let poses = message.position;
+                // console.log(poses[0]);
                 let txt = "";
-                let i = 1;
+                let i = 0;
                 for (let x in poses) {
                     p = ((poses[x] * 180) / Math.PI) % 360;
                     if (p > 180) {
                         p = p - 360;
                     }
-                    position[x] = p;
+                    poses[x] = p;
                 }
+
                 listener.unsubscribe();
+                let item = {
+                    Joint1: poses[0],
+                    Joint2: poses[1],
+                    Joint3: poses[2],
+                    Joint4: poses[3],
+                    Joint5: poses[4],
+                    Joint6: poses[5],
+                }
+
+                this.cposition = item;
             });
+
+            // return item
         },
-        send:function() {
+        send: function () {
             var cmdVel = new ROSLIB.Topic({
-                ros: ros,
+                ros: this.ros,
                 name: "/arm/command",
                 messageType: "sensor_msgs/msg/JointState",
             });
 
-           
 
             rj1 = (this.j1 * Math.PI) / 180;
             rj2 = (this.j2 * Math.PI) / 180;
@@ -159,17 +224,123 @@ const app = Vue.createApp({
             rj5 = (this.j5 * Math.PI) / 180;
             rj6 = (this.j6 * Math.PI) / 180;
 
+            // rj1 = (parseFloat(j1) * Math.PI) / 180;
+            // rj2 = (parseFloat(j2) * Math.PI) / 180;
+            // rj3 = (parseFloat(j3) * Math.PI) / 180;
+            // rj4 = (parseFloat(j4) * Math.PI) / 180;
+            // rj5 = (parseFloat(j5) * Math.PI) / 180;
+            // rj6 = (parseFloat(j6) * Math.PI) / 180;
+            let newspeed = this.speed * 4;
             var JointState = new ROSLIB.Message({
                 name: ["j1", "j2", "j3", "j4", "j5", "j6"],
-                position: [this.j1, this.j2, this.j3, this.j4, this.j5, this.j6],
-                velocity: [10, 10, 10, 10, 10, 10],
+                position: [rj1, rj2, rj3, rj4, rj5, rj6],
+                velocity: [newspeed, newspeed, newspeed, newspeed, newspeed, newspeed],
                 effort: [],
             });
             cmdVel.publish(JointState);
 
             this.addItem()
 
-        }
+        },
+        send: function (target) {
+            var cmdVel = new ROSLIB.Topic({
+                ros: this.ros,
+                name: "/arm/command",
+                messageType: "sensor_msgs/msg/JointState",
+            });
+
+
+            rj1 = (target.joint1 * Math.PI) / 180;
+            rj2 = (target.joint2 * Math.PI) / 180;
+            rj3 = (target.joint3 * Math.PI) / 180;
+            rj4 = (target.joint4 * Math.PI) / 180;
+            rj5 = (target.joint5 * Math.PI) / 180;
+            rj6 = (target.joint6 * Math.PI) / 180;
+
+            let newspeed = this.speed * 4;
+            var JointState = new ROSLIB.Message({
+                name: ["j1", "j2", "j3", "j4", "j5", "j6"],
+                position: [rj1, rj2, rj3, rj4, rj5, rj6],
+                velocity: [newspeed, newspeed, newspeed, newspeed, newspeed, newspeed],
+                effort: [],
+            });
+            cmdVel.publish(JointState);
+
+            this.addItem()
+
+        },
+        todo: function () {
+            this.intervalid1 = setInterval(() => {
+                this.showPosition();
+            }, 1000);
+
+        },
+        getKey(evt) {
+            this.keyValue = evt.key
+            console.log(evt.key)
+            // this.speed = 25
+            switch (this.keyValue) {
+                case 'z':
+                    this.j1--;
+                    this.send()
+                    break;
+                case 'x':
+                    this.j1++;
+                    this.send()
+                    break;
+
+                case 'a':
+                    this.j2--;
+                    this.send()
+                    break;
+                case 's':
+                    this.j2++;
+                    this.send()
+                    break;
+
+                case 'q':
+                    this.j3--;
+                    this.send()
+                    break;
+                case 'w':
+                    this.j3++;
+                    this.send()
+                    break;
+
+                case 'n':
+                    this.j4--;
+                    this.send()
+                    break;
+                case 'm':
+                    this.j4++;
+                    this.send()
+                    break;
+
+                case 'k':
+                    this.j5--;
+                    this.send()
+                    break;
+                case 'l':
+                    this.j5++;
+                    this.send()
+                    break;
+
+                case 'o':
+                    this.j6--;
+                    this.send()
+                    break;
+                case 'p':
+                    this.j6++;
+                    this.send()
+                    break;
+                case 'Enter', 'Escape', ' ':
+                    console.log('Stop');
+                    this.Stop()
+                    break;
+            }
+
+            // this.speed = 100
+        },
 
     },
 
@@ -178,5 +349,6 @@ const app = Vue.createApp({
         console.log('page is ready!')
     },
 })
+
 
 app.mount('#app')

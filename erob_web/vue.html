@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<html>
+
+<html lang="en">
 
 <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>ARO Robotic Systems </title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
+    <link rel="stylesheet" href="bootstrap.min.css" />
 
+    <!-- <link rel="stylesheet" href="bootstrap-icons.min.css"> -->
     <style>
         .slider {
             -webkit-appearance: none;
@@ -72,7 +74,7 @@
         thead {
             position: sticky;
             top: 0;
-            background-color: #e0ffee;
+            background-color: #eeffef;
             /* Prevents header from becoming transparent */
             z-index: 100;
             /* Ensures the header stays on top of other content */
@@ -84,28 +86,17 @@
 
 <body>
 
-
-
-
     <div id="app" class="container mt-4">
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="card">
                     <div class="card-header">
 
                         <b>ARO Robotic Systems</b>
                     </div>
                     <div class="card-body">
-                        ROSBridge & Vue Js
-                    </div>
-                </div>
 
-                <div class="card mt-2">
-                    <div class="card-header">
-                        <b> Connection </b>
-                    </div>
-                    <div class="card-body">
-
+                        <h4>ROSBridge & Vue Js</h4>
                         <label>ROSBridge address</label>
                         <br />
                         <input type="text" class="form-control" value="ws://127.0.0.1:9090/" />
@@ -117,6 +108,28 @@
                             <div style="color: #ff0000;" v-show="error">Error in the backend!</div>
                             <div v-show="!connected">Connection closed.</div>
                         </div>
+                    </div>
+                </div>
+
+                <div class="card mt-2">
+                    <div class="card-header">
+                        <b> Categories </b>
+                    </div>
+                    <div class="card-body">
+                        <div class="input-group mb-2 mt-2">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Title:</span>
+                            </div>
+                            <input class=" form-control" placeholder="Enter Category Title" id="catTitle"
+                                v-model="catTitle" />
+
+                        </div>
+                        <button class="mt-2 btn btn-success ml-1" @click="showData"> Show Data </button>
+                        <button class="mt-2 btn btn-info ml-1" onclick="saveWorkspace()"> Save to File </button>
+                        <button class="mt-2 btn btn-primary ml-1"
+                            onclick="document.getElementById('file-input').click()">Open Form File</button>
+
+
                     </div>
                 </div>
                 <div class="card mt-2 mb-2">
@@ -135,609 +148,386 @@
             </div>
 
 
-
-
-            <div class="col-md-8">
+            <div class="col-md-9">
                 <!-- actions -->
                 <div class="card">
                     <div class="card-header">
-                        <div>
-                            <div class="row">
-
-                                <div class="col-md-6 col-sm-6">
-                                    <b>Set Position <sup>(Degree)</sup> </b>
-                                </div>
-                                <div class="col-md-6 col-sm-6 text-right">
-
-                                    <button @click="currentPosition" class="btn btn-sm   btn-success ml-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                                            fill="currentColor" class="bi bi-r-circle" viewBox="0 0 16 16">
-                                            <path
-                                                d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.5 4.002h3.11c1.71 0 2.741.973 2.741 2.46 0 1.138-.667 1.94-1.495 2.24L11.5 12H9.98L8.52 8.924H6.836V12H5.5zm1.335 1.09v2.777h1.549c.995 0 1.573-.463 1.573-1.36 0-.913-.596-1.417-1.537-1.417z" />
-                                        </svg>
-                                    </button>
-                                    <button class="btn btn-sm  btn-primary ml-2" v-on:keydown="getKey">Active
-                                        Keyboard</button>
-                                </div>
-                            </div>
-                        </div>
+                        <b> Operations </b>
                     </div>
                     <div class="card-body">
-                        <div>
-                            <div class="input-group mb-2">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="basic-addon1">Joint 1:</span>
+
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div class="card">
+                                    <div class="card card-header">
+                                        <div class="row">
+
+                                            <div class="col-md-6 col-sm-6">
+                                                <b>Set Position <sup>(Degree)</sup> </b>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6 text-right">
+
+                                                <button @click="currentPosition" class="btn btn-sm   btn-success ml-2">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                                        fill="currentColor" class="bi bi-r-circle" viewBox="0 0 16 16">
+                                                        <path
+                                                            d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.5 4.002h3.11c1.71 0 2.741.973 2.741 2.46 0 1.138-.667 1.94-1.495 2.24L11.5 12H9.98L8.52 8.924H6.836V12H5.5zm1.335 1.09v2.777h1.549c.995 0 1.573-.463 1.573-1.36 0-.913-.596-1.417-1.537-1.417z" />
+                                                    </svg>
+                                                </button>
+                                                <button class="btn btn-sm  btn-primary ml-2"
+                                                    v-on:keydown="getKey">Active
+                                                    Keyboard</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card card-body">
+                                        <div class="input-group mb-2">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="basic-addon1">Joint 1:</span>
+                                            </div>
+                                            <input class="col-md-2 form-control" v-model="j1" max="180" min="-180"
+                                                type="number" />
+                                            <div class="col-md-8">
+                                                <input type="range" min="-180" v-model="j1" max="180"
+                                                    class="slider mt-2" />
+                                            </div>
+                                        </div>
+
+
+                                        <div class="input-group mb-2">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="basic-addon1">Joint 2:</span>
+                                            </div>
+                                            <input class="col-md-2 form-control" v-model="j2" max="180" min="-180"
+                                                type="number" />
+                                            <div class="col-md-8">
+                                                <input type="range" min="-180" v-model="j2" max="180" value="0"
+                                                    class="slider mt-2" />
+                                            </div>
+                                        </div>
+
+                                        <div class="input-group mb-2">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="basic-addon1">Joint 3:</span>
+                                            </div>
+                                            <input class="col-md-2 form-control" v-model="j3" max="180" min="-180"
+                                                type="number" />
+                                            <div class="col-md-8">
+                                                <input type="range" min="-180" v-model="j3" max="180" value="0"
+                                                    class="slider mt-2" />
+                                            </div>
+                                        </div>
+
+                                        <div class="input-group mb-2">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="basic-addon1">Joint 4:</span>
+                                            </div>
+                                            <input class="col-md-2 form-control" v-model="j4" max="180" min="-180"
+                                                type="number" />
+                                            <div class="col-md-8">
+                                                <input type="range" min="-180" v-model="j4" max="180" value="0"
+                                                    class="slider mt-2" />
+                                            </div>
+                                        </div>
+
+                                        <div class="input-group mb-2">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="basic-addon1">Joint 5:</span>
+                                            </div>
+                                            <input class="col-md-2 form-control" v-model="j5" max="180" min="-180"
+                                                type="number" />
+                                            <div class="col-md-8">
+                                                <input type="range" min="-180" v-model="j5" max="180" value="0"
+                                                    class="slider mt-2" />
+                                            </div>
+                                        </div>
+
+                                        <div class="input-group mb-2">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="basic-addon1">Joint 6:</span>
+                                            </div>
+                                            <input class="col-md-2 form-control" v-model="j6" max="180" min="-180"
+                                                type="number" />
+                                            <div class="col-md-8">
+                                                <input type="range" min="-180" v-model="j6" max="180" value="0"
+                                                    class="slider mt-2" />
+                                            </div>
+                                        </div>
+                                        <div class="input-group mb-2 mt-2">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">Speed:</span>
+                                            </div>
+                                            <input class="col-md-2 form-control" v-model="speed" max="100" min="1"
+                                                type="number" />
+                                            <div class="col-md-8">
+                                                <input type="range" min="1" v-model="speed" max="100"
+                                                    class="slider2 mt-2" />
+                                            </div>
+                                        </div>
+
+                                     
+                                        <hr>
+                                        <div class="row m-2">
+                                            <div class="col-md-8 col-sm-12">
+                                                <div class="input-group  ">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">Title:</span>
+                                                    </div>
+                                                    <input class="form-control mr-1" v-model="title" />
+
+
+                                                    <!-- </div>
+                                            <div class="input-group mb-2"> -->
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">Delay(s):</span>
+                                                    </div>
+                                                    <input class=" form-control" v-model="delay" max="60" min="0"
+                                                        type="number" />
+
+                                                </div>
+                                            </div>
+                                           
+                                        </div>
+                                    </div>
+                                    <div class="card card-footer">
+                                        
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6">
+                                                
+                                                <button class="btn btn-success " @click="Save">Save Position</button>
+
+                                                
+                                            </div>
+                                            <!-- <div class="col-md-4"></div> -->
+                                            <div class="col-md-6 col-sm-6 text-right">
+                                                <button class=" btn btn-primary" @click="send"> Move </button>
+                                                <button class=" btn btn-danger ml-1" @click="Stop"> Stop </button>
+
+                                                <!-- <button class="mt-2 btn btn-success "  @click="Disengage"> Disengage
+                                                Brake </button> -->
+                                            </div>
+                                        </div>
+                                    </div>
+
+
                                 </div>
-                                <input class="col-md-2 form-control" v-model="j1" max="180" min="-180" type="number" />
-                                <div class="col-md-8">
-                                    <input type="range" min="-180" v-model="j1" max="180" class="slider mt-2" />
+                            </div>
+                            <div class="col-md-3">
+                                <div class="row">
+
+
+                                    <div class="col-md-12">
+                                        <div class="card">
+                                            <div class="card card-header">LED</div>
+                                            <div class="card card-body">
+                                                <button class="btn btn-success"> ADD Blink</button>
+                                            </div>
+                                            <!-- <div class="card card-footer">footer</div> -->
+
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 mt-1">
+                                        <div class="card">
+                                            <div class="card card-header">Buzzer</div>
+                                            <div class="card card-body">
+                                                <button class="btn btn-success"> ADD Beep</button>
+                                            </div>
+                                            <!-- <div class="card card-footer">footer</div> -->
+
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 mt-1">
+                                        <div class="card">
+                                            <div class="card card-header">Hand</div>
+                                            <div class="card card-body">
+                                                <!-- <select required v-model="actionName" v-on:change="newUrl">
+                                                    <option value="" selected disabled>Select Action</option>
+                                                    <option v-for="item in preDefItems" v-bind:value="item.name" >
+                                                      {{ item.name }}
+                                                    </option>
+                                                  </select> -->
+                                            </div>
+                                            <div class="card card-footer">footer</div>
+
+
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
 
 
-                            <div class="input-group mb-2">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="basic-addon1">Joint 2:</span>
-                                </div>
-                                <input class="col-md-2 form-control" v-model="j2" max="180" min="-180" type="number" />
-                                <div class="col-md-8">
-                                    <input type="range" min="-180" v-model="j2" max="180" value="0"
-                                        class="slider mt-2" />
-                                </div>
-                            </div>
-
-                            <div class="input-group mb-2">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="basic-addon1">Joint 3:</span>
-                                </div>
-                                <input class="col-md-2 form-control" v-model="j3" max="180" min="-180" type="number" />
-                                <div class="col-md-8">
-                                    <input type="range" min="-180" v-model="j3" max="180" value="0"
-                                        class="slider mt-2" />
-                                </div>
-                            </div>
-
-                            <div class="input-group mb-2">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="basic-addon1">Joint 4:</span>
-                                </div>
-                                <input class="col-md-2 form-control" v-model="j4" max="180" min="-180" type="number" />
-                                <div class="col-md-8">
-                                    <input type="range" min="-180" v-model="j4" max="180" value="0"
-                                        class="slider mt-2" />
-                                </div>
-                            </div>
-
-                            <div class="input-group mb-2">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="basic-addon1">Joint 5:</span>
-                                </div>
-                                <input class="col-md-2 form-control" v-model="j5" max="180" min="-180" type="number" />
-                                <div class="col-md-8">
-                                    <input type="range" min="-180" v-model="j5" max="180" value="0"
-                                        class="slider mt-2" />
-                                </div>
-                            </div>
-
-                            <div class="input-group mb-2">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="basic-addon1">Joint 6:</span>
-                                </div>
-                                <input class="col-md-2 form-control" v-model="j6" max="180" min="-180" type="number" />
-                                <div class="col-md-8">
-                                    <input type="range" min="-180" v-model="j6" max="180" value="0"
-                                        class="slider mt-2" />
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="input-group mb-2 mt-2">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">Speed:</span>
-                                </div>
-                                <input class="col-md-2 form-control" v-model="speed" max="100" min="1" type="number" />
-                                <div class="col-md-8">
-                                    <input type="range" min="1" v-model="speed" max="100" class="slider2 mt-2" />
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-8 col-sm-8">
 
 
-                                    <button class="mt-2 btn btn-primary" @click="send"> Move </button>
-                                    <button class="mt-2 btn btn-info ml-1" @click="Save"> Save Position </button>
-
-                                </div>
-                                <!-- <div class="col-md-4"></div> -->
-                                <div class="col-md-4 col-sm-4 text-right">
-                                    <button class="mt-2 btn btn-danger mr-1" @click="Stop"> Stop </button>
-                                    <button class="mt-2 btn btn-info ml-1" @click="docycle"> Do </button>
-                                    <!-- <button class="mt-2 btn btn-success "  @click="Disengage"> Disengage
-                                        Brake </button> -->
-                                </div>
-                            </div>
 
                         </div>
-                        <hr />
-                        <div>
-                            <b>History: </b>
-                            <br />
-                            <!-- <span id="history"></span> -->
-                            <div class="table-responsive" style="max-height: 26vh;">
 
-                                <table ref="table" id="history"
+
+
+                    </div>
+
+                   
+
+                </div>
+
+                <div class="card mt-2">
+                    <div class="card card-header "><b>Operations List</b></div>
+                    <div class="card card-body">
+                     
+                            <div class="table-responsive" style="max-height: 50vh;">
+
+
+                                <table id="storedata" data-pagination="true" data-search="true" data-show-toggle="true"
+                                    data-toolbar=".toolbar" data-use-row-attr-func="true" data-reorderable-rows="true"
                                     class="table table-nowrap table-sm text-center table-striped ">
                                     <thead>
 
                                         <tr>
 
                                             <th>index</th>
+                                            <th>title</th>
                                             <th>Joint 1</th>
                                             <th>joint 2</th>
                                             <th>joint 3</th>
                                             <th>joint 4</th>
                                             <th>joint 5</th>
                                             <th>joint 6</th>
+                                            <th>speed</th>
+                                            <th>delay</th>
+                                            <th>Delete</th>
                                         </tr>
                                     </thead>
                                     <tbody>
 
-                                        <tr v-for="(x,index) in history">
+                                        <tr draggable="true" ondragstart="start()" ondragover="dragover()"
+                                            v-for="(x,index) in store">
                                             <th>{{index+1}}</td>
+                                            <td>{{x.title}}</td>
                                             <td>{{x.joint1}}</td>
                                             <td>{{x.joint2}}</td>
                                             <td>{{x.joint3}}</td>
                                             <td>{{x.joint4}}</td>
                                             <td>{{x.joint5}}</td>
                                             <td>{{x.joint6}}</td>
+                                            <td>{{x.speed}}</td>
+                                            <td>{{x.delay}}</td>
+                                            <td>
+                                                <button @click="Delete(index)" class="btn btn-sm btn-danger"><svg
+                                                        xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                        fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                                        <path
+                                                            d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                                                        <path
+                                                            d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+                                                    </svg></button>
+                                            </td>
                                         </tr>
                                     </tbody>
-                                    <tfoot>
+                                    <!-- <tfoot>
                                         <tr>
                                             <th scope="row" colspan="2">Count</th>
-                                            <td>{{history.length }}</td>
+                                            <td>{{store.length }}</td>
                                         </tr>
-                                    </tfoot>
+                                        <tr>
+                                            <button @click="moveItem"> Save To Memory</button>
+                                        </tr>
+                                    </tfoot> -->
 
 
                                 </table>
+
                             </div>
+
+                    </div>
+                    <div class="card card-footer">
+                        <button class="btn btn-success col-md-2" @click="docycle"> RUN </button>
+
+                    </div>
+
+                    <div class="card mt-2">
+                        <div class="card card-header"><b>History</b></div>
+                        <div class="card card-body">
+                          
+                
+                                <div class="table-responsive" style="max-height: 26vh;">
+
+                                    <table ref="table" id="history"
+                                        class="table table-nowrap table-sm text-center table-striped ">
+                                        <thead>
+
+                                            <tr>
+
+                                                <th>index</th>
+                                                <th>Joint 1</th>
+                                                <th>joint 2</th>
+                                                <th>joint 3</th>
+                                                <th>joint 4</th>
+                                                <th>joint 5</th>
+                                                <th>joint 6</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+                                            <tr v-for="(x,index) in history">
+                                                <th>{{index+1}}</td>
+                                                <td>{{x.joint1}}</td>
+                                                <td>{{x.joint2}}</td>
+                                                <td>{{x.joint3}}</td>
+                                                <td>{{x.joint4}}</td>
+                                                <td>{{x.joint5}}</td>
+                                                <td>{{x.joint6}}</td>
+                                            </tr>
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <th scope="row" colspan="2">Count</th>
+                                                <td>{{history.length }}</td>
+                                            </tr>
+                                        </tfoot>
+
+
+                                    </table>
+                                </div>
+
+                          
                         </div>
-
-
-                        <div>
-                            <b>Saved positions: </b>
-                            <br />
-                            <!-- <span id="history"></span> -->
-                            <div class="table-responsive" style="max-height: 26vh;">
-
-                                <table ref="table" id="store"
-                                    class="table table-nowrap table-sm text-center table-striped ">
-                                    <thead>
-
-                                        <tr>
-
-                                            <th>index</th>
-                                            <th>Joint 1</th>
-                                            <th>joint 2</th>
-                                            <th>joint 3</th>
-                                            <th>joint 4</th>
-                                            <th>joint 5</th>
-                                            <th>joint 6</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-
-                                        <tr v-for="(x,index) in store">
-                                            <th>{{index+1}}</td>
-                                            <td>{{x.joint1}}</td>
-                                            <td>{{x.joint2}}</td>
-                                            <td>{{x.joint3}}</td>
-                                            <td>{{x.joint4}}</td>
-                                            <td>{{x.joint5}}</td>
-                                            <td>{{x.joint6}}</td>
-                                        </tr>
-                                    </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <th scope="row" colspan="2">Count</th>
-                                            <td>{{history.length }}</td>
-                                        </tr>
-                                    </tfoot>
-
-
-                                </table>
-                            </div>
+                        <div class="card card-footer">
+                            <button class="btn btn-warning  col-md-2" @click="clearHistory">Clear</button>
                         </div>
                     </div>
                 </div>
             </div>
+            <input type="file" id="file-input" hidden />
+            <pre id="file-content" hidden></pre>
         </div>
-    </div>
+
+
+        <script src="vue.global.js"></script>
+        <script type="text/javascript">
+            // <script type="text/javascript">
+            // We could have loaded main.js simply with:
+            //  <script type="text/javascript" src="main.js">
+            //
+            // BUT we were having caching-related problems.
+            // Loading main.js with a Date.now() in the URL we avoid using cache
+
+            var script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.src = 'main.js?v=4.' + Date.now();
+            document.head.appendChild(script);
+
+            var script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.src = 'index.js?v=4.' + Date.now();
+            document.head.appendChild(script);
+
+        </script>
 
 
 
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <!-- <script type="text/javascript">
-    // We could have loaded main.js simply with:
-    //  <script type="text/javascript" src="main.js">
-    //
-    // BUT we were having caching-related problems.
-    // Loading main.js with a Date.now() in the URL we avoid using cache
 
-    var script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.src = 'main.js?v=4.' + Date.now();
-    document.head.appendChild(script);
-</script> -->
-
-    <!-- <script src="main.js"></script> -->
-
-    <script>
-        // var ros = new ROSLIB.Ros();
-        const app = Vue.createApp({
-
-            el: "#app",
-            data() {
-                return {
-                    // ros connection
-                    ros: null,
-                    rosbridge_address: 'ws://127.0.0.1:9090/',
-                    connected: false,
-                    error: false,
-                    // subscriber data
-                    cposition: {
-                        Joint1: 0.0,
-                        Joint2: 0.0,
-                        Joint3: 0.0,
-                        Joint4: 0.0,
-                        Joint5: 0.0,
-                        Joint6: 0.0,
-                    },
-
-                    j1: 0.00,
-                    j2: 0.00,
-                    j3: 0.00,
-                    j4: 0.00,
-                    j5: 0.00,
-                    j6: 0.00,
-                    history: [],
-                    menu_title: 'Connection',
-                    main_title: 'Main title, from Vue!!',
-                    keyValue: 'A',
-                    speed: 100,
-                    store: [],
-                }
-            },
-            methods: {
-                connect: function () {
-                    // define ROSBridge connection object
-                    this.ros = new ROSLIB.Ros({
-                        url: this.rosbridge_address
-                    })
-
-                    // define callbacks
-                    this.ros.on('connection', () => {
-                        this.connected = true
-                        console.log('Connection to ROSBridge established!')
-
-                        this.todo()
-                        // try{
-
-                        //     this.store = JSON.parse(localStorage.getItem("positions"));
-                        // }
-                        // catch
-                        // {
-                        //     localStorage.setItem("positions", JSON.stringify(this.store));
-                        // }
-
-                    })
-                    this.ros.on('error', (error) => {
-                        this.error = true
-                        console.log('Something went wrong when trying to connect')
-                        console.log(error)
-                    })
-                    this.ros.on('close', () => {
-                        this.connected = false
-                        console.log('Connection to ROSBridge was closed!')
-                    })
-                },
-                disconnect: function () {
-                    this.ros.close()
-                },
-                // sendCommand: function () {
-                //     let topic = new ROSLIB.Topic({
-                //         ros: this.ros,
-                //         name: 'arm/command',
-                //         messageType: 'sensor_msgs/msg'
-                //     })
-                //     let message = new ROSLIB.Message({
-                //         linear: { x: 1, y: 0, z: 0, },
-                //         angular: { x: 0, y: 0, z: 0.5, },
-                //     })
-                //     topic.publish(message)
-                // },
-                // turnRight: function () {
-                //     let topic = new ROSLIB.Topic({
-                //         ros: this.ros,
-                //         name: '/cmd_vel',
-                //         messageType: 'geometry_msgs/Twist'
-                //     })
-                //     let message = new ROSLIB.Message({
-                //         linear: { x: 1, y: 0, z: 0, },
-                //         angular: { x: 0, y: 0, z: -0.5, },
-                //     })
-                //     topic.publish(message)
-                // },
-                Stop: function () {
-                    var cmdVel = new ROSLIB.Topic({
-                        ros: this.ros,
-                        name: "/arm/stop",
-                        messageType: "std_msgs/msg/String",
-                    });
-                    var msg = new ROSLIB.Message({
-                        data: "stop"
-                    });
-
-                    cmdVel.publish(msg);
-                },
-                Disengage: function () {
-                    var cmdVel = new ROSLIB.Topic({
-                        ros: this.ros,
-                        name: "/arm/disengage",
-                        messageType: "std_msgs/msg/String",
-                    });
-                    var msg = new ROSLIB.Message({
-                        data: "disengage"
-                    });
-
-                    cmdVel.publish(msg);
-                },
-                addItem: function () {
-
-                    let item = {
-                        joint1: this.j1,
-                        joint2: this.j2,
-                        joint3: this.j3,
-                        joint4: this.j4,
-                        joint5: this.j5,
-                        joint6: this.j6
-                    }
-                    this.history.push(item)
-
-                    this.$refs.table.scrollIntoView({ block: "end" });
-                },
-
-                Save: function () {
-
-                    let item = {
-                        joint1: this.j1,
-                        joint2: this.j2,
-                        joint3: this.j3,
-                        joint4: this.j4,
-                        joint5: this.j5,
-                        joint6: this.j6
-                    }
-                    // let positions = localStorage.getItem("positions");
-                    // positions.addItem(item);
-                    this.store.push(item)
-                    localStorage.setItem("positions", JSON.stringify(this.store));
-                },
-                docycle: function () {
-                    // this.store = JSON.parse(localStorage.getItem("positions"));
-                    for (pos in this.store) {
-                        console.log(this.store[pos])
-                        this.send2(this.store[pos])
-                        while (this.reach(this.store[pos]));
-                        this.sleep(1000);
-                    }
-                    
-                },
-                reach: function (target) {
-                    if (this.cposition.Joint1 != target.joint1)
-                        return false;
-                    if (this.cposition.Joint2 != target.joint2)
-                        return false;
-                    if (this.cposition.Joint3 != target.joint3)
-                        return false;
-                    if (this.cposition.Joint4 != target.joint4)
-                        return false;
-                    if (this.cposition.Joint5 != target.joint5)
-                        return false;
-                    if (this.cposition.Joint6 != target.joint6)
-                        return false;
-                    return true;
-                },
-                sleep(milliseconds) {
-                    return new Promise((resolve) => setTimeout(resolve, milliseconds));
-                },
-                currentPosition: function () {
-                    this.j1 = Math.round(this.cposition.Joint1)
-                    this.j2 = Math.round(this.cposition.Joint2)
-                    this.j3 = Math.round(this.cposition.Joint3)
-                    this.j4 = Math.round(this.cposition.Joint4)
-                    this.j5 = Math.round(this.cposition.Joint5)
-                    this.j6 = Math.round(this.cposition.Joint6)
-                },
-                showPosition: function () {
-                    var listener = new ROSLIB.Topic({
-                        ros: this.ros,
-                        name: "/arm/state",
-                        messageType: "sensor_msgs/msg/JointState",
-                    });
-                    listener.subscribe((message) => {
-                        //    this.cposition= listener.subscribe(function (message) {
-
-                        let poses = message.position;
-                        // console.log(poses[0]);
-                        let txt = "";
-                        let i = 0;
-                        for (let x in poses) {
-                            p = ((poses[x] * 180) / Math.PI) % 360;
-                            if (p > 180) {
-                                p = p - 360;
-                            }
-                            poses[x] = p;
-                        }
-
-                        listener.unsubscribe();
-                        let item = {
-                            Joint1: poses[0],
-                            Joint2: poses[1],
-                            Joint3: poses[2],
-                            Joint4: poses[3],
-                            Joint5: poses[4],
-                            Joint6: poses[5],
-                        }
-
-                        this.cposition = item;
-                    });
-
-                    // return item
-                },
-                send: function () {
-                    var cmdVel = new ROSLIB.Topic({
-                        ros: this.ros,
-                        name: "/arm/command",
-                        messageType: "sensor_msgs/msg/JointState",
-                    });
-
-
-                    rj1 = (this.j1 * Math.PI) / 180;
-                    rj2 = (this.j2 * Math.PI) / 180;
-                    rj3 = (this.j3 * Math.PI) / 180;
-                    rj4 = (this.j4 * Math.PI) / 180;
-                    rj5 = (this.j5 * Math.PI) / 180;
-                    rj6 = (this.j6 * Math.PI) / 180;
-
-                    // rj1 = (parseFloat(j1) * Math.PI) / 180;
-                    // rj2 = (parseFloat(j2) * Math.PI) / 180;
-                    // rj3 = (parseFloat(j3) * Math.PI) / 180;
-                    // rj4 = (parseFloat(j4) * Math.PI) / 180;
-                    // rj5 = (parseFloat(j5) * Math.PI) / 180;
-                    // rj6 = (parseFloat(j6) * Math.PI) / 180;
-                    let newspeed = this.speed * 4;
-                    var JointState = new ROSLIB.Message({
-                        name: ["j1", "j2", "j3", "j4", "j5", "j6"],
-                        position: [rj1, rj2, rj3, rj4, rj5, rj6],
-                        velocity: [newspeed, newspeed, newspeed, newspeed, newspeed, newspeed],
-                        effort: [],
-                    });
-                    cmdVel.publish(JointState);
-
-                    this.addItem()
-
-                },
-                send2: function (target) {
-                    var cmdVel = new ROSLIB.Topic({
-                        ros: this.ros,
-                        name: "/arm/command",
-                        messageType: "sensor_msgs/msg/JointState",
-                    });
-
-
-                    rj1 = (target.joint1 * Math.PI) / 180;
-                    rj2 = (target.joint2 * Math.PI) / 180;
-                    rj3 = (target.joint3 * Math.PI) / 180;
-                    rj4 = (target.joint4 * Math.PI) / 180;
-                    rj5 = (target.joint5 * Math.PI) / 180;
-                    rj6 = (target.joint6 * Math.PI) / 180;
-
-                    let newspeed = this.speed * 4;
-                    var JointState = new ROSLIB.Message({
-                        name: ["j1", "j2", "j3", "j4", "j5", "j6"],
-                        position: [rj1, rj2, rj3, rj4, rj5, rj6],
-                        velocity: [newspeed, newspeed, newspeed, newspeed, newspeed, newspeed],
-                        effort: [],
-                    });
-                    cmdVel.publish(JointState);
-
-                    this.addItem()
-
-                },
-                todo: function () {
-                    this.intervalid1 = setInterval(() => {
-                        this.showPosition();
-                    }, 1000);
-
-                },
-                getKey(evt) {
-                    this.keyValue = evt.key
-                    console.log(evt.key)
-                    // this.speed = 25
-                    switch (this.keyValue) {
-                        case 'z':
-                            this.j1--;
-                            this.send()
-                            break;
-                        case 'x':
-                            this.j1++;
-                            this.send()
-                            break;
-
-                        case 'a':
-                            this.j2--;
-                            this.send()
-                            break;
-                        case 's':
-                            this.j2++;
-                            this.send()
-                            break;
-
-                        case 'q':
-                            this.j3--;
-                            this.send()
-                            break;
-                        case 'w':
-                            this.j3++;
-                            this.send()
-                            break;
-
-                        case 'n':
-                            this.j4--;
-                            this.send()
-                            break;
-                        case 'm':
-                            this.j4++;
-                            this.send()
-                            break;
-
-                        case 'k':
-                            this.j5--;
-                            this.send()
-                            break;
-                        case 'l':
-                            this.j5++;
-                            this.send()
-                            break;
-
-                        case 'o':
-                            this.j6--;
-                            this.send()
-                            break;
-                        case 'p':
-                            this.j6++;
-                            this.send()
-                            break;
-                        case 'Enter', 'Escape', ' ':
-                            console.log('Stop');
-                            this.Stop()
-                            break;
-                    }
-
-                    // this.speed = 100
-                },
-
-            },
-
-            mounted() {
-                // page is ready
-                console.log('page is ready!')
-            },
-        })
-
-        app.mount('#app')
-    </script>
 
 </body>
 
