@@ -5,6 +5,7 @@ const app = Vue.createApp({
         return {
             // ros connection
             ros: null,
+            config: false,
             rosbridge_address: 'ws://127.0.0.1:9090/',
             connected: false,
             error: false,
@@ -27,12 +28,28 @@ const app = Vue.createApp({
             delay: 0,
             title: '',
             history: [],
-            menu_title: 'Connection',
-            main_title: 'Main title, from Vue!!',
+            // menu_title: 'Connection',
+            // main_title: 'Main title, from Vue!!',
             keyValue: 'A',
             speed: 100,
             store: [],
             catTitle: '',
+            actionName: '',
+            actionList: [
+                { "name": "Pick Up", "actionCmd": "/hand/pickup" },
+                { "name": "Drop Off", "actionCmd": "/hand/dropoff" },
+                { "name": "Go Home", "actionCmd": "/hand/home" },
+                { "name": "Action 1", "actionCmd": "/hand/action1" },
+                { "name": "Action 2", "actionCmd": "/hand/action2" },
+                { "name": "Action 3", "actionCmd": "/hand/action3" },
+                { "name": "Action 4", "actionCmd": "/hand/action4" },
+            ],
+            blink: 1,
+            buzz: 1,
+
+            catList: [],
+            ShowOperations: false,
+           
         }
     },
     methods: {
@@ -62,14 +79,33 @@ const app = Vue.createApp({
             this.showData()
         },
         showData: function () {
-            this.catTitle = document.getElementById('catTitle').value;
-            if (localStorage.getItem(this.catTitle) === null) {
+            try {
+                this.catTitle = document.getElementById('catTitle1').value;
+                if (localStorage.getItem(this.catTitle) === null) {
 
-                localStorage.setItem(this.catTitle, JSON.stringify(this.store));
+                    localStorage.setItem(this.catTitle, JSON.stringify(this.store));
+                }
+                else {
+                    
+                    this.store = JSON.parse(localStorage.getItem(this.catTitle));
+                }
+            }
+            catch (err) {
+
+            }
+
+
+            if (localStorage.getItem('catlist') === null) {
+
+                localStorage.setItem('catlist', JSON.stringify(this.catList));
             }
             else {
-                this.store = JSON.parse(localStorage.getItem(this.catTitle));
+                this.catList = JSON.parse(localStorage.getItem('catlist'));
             }
+
+       
+
+
         },
         disconnect: function () {
             this.ros.close()
@@ -114,29 +150,16 @@ const app = Vue.createApp({
             this.$refs.table.scrollIntoView({ block: "end" });
         },
 
-        Save: function (delayafter) {
-
-            let item = {
-                joint1: this.j1,
-                joint2: this.j2,
-                joint3: this.j3,
-                joint4: this.j4,
-                joint5: this.j5,
-                joint6: this.j6,
-                speed: this.speed,
-                delay: this.delay,
-                title: this.title,
-            }
-            // let positions = localStorage.getItem("positions");
-            // positions.addItem(item);
-            this.store.push(item)
-            localStorage.setItem(this.catTitle, JSON.stringify(this.store));
-        },
 
         Delete: function (index) {
             // this.store.splice(this.store.indexOf(index), 1);  
             this.store.splice(index, 1);
             localStorage.setItem(this.catTitle, JSON.stringify(this.store));
+        },
+        DeleteFromCatList: function (index) {
+            // this.store.splice(this.store.indexOf(index), 1);  
+            this.catList.splice(index, 1);
+            localStorage.setItem("catlist", JSON.stringify(this.catList));
         },
         docycle: function () {
             this.store = JSON.parse(localStorage.getItem(this.catTitle));
@@ -146,6 +169,32 @@ const app = Vue.createApp({
                 while (this.reach(pos));
                 sleep(pos.delay * 1000);
             }
+        },
+        doOperations: function () {
+            this.catList = JSON.parse(localStorage.getItem('catlist'));
+            // console.log(this.catList[0])
+            for (item in this.catList) {
+                let data = JSON.parse(localStorage.getItem(this.catList[item].name));
+                // console.log(data)
+                for (pos in data) {
+                    // console.log(pos)
+                    if (data[pos].type == "Arm"){
+                        console.log(data[pos].value)
+                        this.send(data[pos].value)
+                        while (this.reach(data[pos].value));
+                        sleep(data[pos].value.delay * 1000);
+                    }
+                    else
+                    {
+                        console.log(data[pos].type)
+                    }
+                    // send(pos)
+                    // while (this.reach(pos));
+                    // sleep(pos.delay * 1000);
+                }
+            }
+
+
         },
         reach: function (target) {
             if (cposition.Joint1 != target.joint1)
@@ -264,10 +313,17 @@ const app = Vue.createApp({
                 velocity: [newspeed, newspeed, newspeed, newspeed, newspeed, newspeed],
                 effort: [],
             });
-            cmdVel.publish(JointState);
+            // cmdVel.publish(JointState);
 
-            this.addItem()
+            // this.addItem()
 
+        },
+        clearHistory: function () {
+            this.history = '';
+        },
+        clearPositions: function () {
+            localStorage.setItem('', JSON.stringify([]));
+            this.store=[];
         },
         todo: function () {
             this.intervalid1 = setInterval(() => {
@@ -342,11 +398,99 @@ const app = Vue.createApp({
             // this.speed = 100
         },
 
+        addPosition: function () {
+
+            let item = {
+                type: "Arm",
+                value: {
+                    joint1: this.j1,
+                    joint2: this.j2,
+                    joint3: this.j3,
+                    joint4: this.j4,
+                    joint5: this.j5,
+                    joint6: this.j6,
+                    speed: this.speed,
+                    delay: this.delay,
+                    title: this.title,
+                },
+            }
+            // let positions = localStorage.getItem("positions");
+            // positions.addItem(item);
+            this.store.push(item);
+            localStorage.setItem(this.catTitle, JSON.stringify(this.store));
+        },
+
+        addBlink: function () {
+            let item = {
+                type: "LED",
+                value: {
+                    reapet: this.blink,
+                }
+            }
+            // let positions = localStorage.getItem("positions");
+            // positions.addItem(item);
+            this.store.push(item)
+            localStorage.setItem(this.catTitle, JSON.stringify(this.store));
+
+        },
+        addBuzz: function () {
+            let item = {
+                type: "Buzzer",
+                value: {
+                    reapet: this.buzz,
+                }
+            }
+            // let positions = localStorage.getItem("positions");
+            // positions.addItem(item);
+            this.store.push(item)
+            localStorage.setItem(this.catTitle, JSON.stringify(this.store));
+
+
+        },
+        addHandAction: function () {
+            let item = {
+                type: "Hand",
+                value: {
+                    action: this.actionName,
+                }
+            }
+            // let positions = localStorage.getItem("positions");
+            // positions.addItem(item);
+            this.store.push(item)
+            localStorage.setItem(this.catTitle, JSON.stringify(this.store));
+
+        },
+        AddToCatList: function () {
+            this.catTitle = document.getElementById('catTitle1').value;
+
+            let item = {
+                name: this.catTitle,
+            }
+            console.log(this.catTitle)
+            console.log(item)
+            this.catList.push(item)
+            localStorage.setItem('catlist', JSON.stringify(this.catList));
+        },
+
+        saveWorkspace: function () {
+            localStorage.setItem(this.catTitle, JSON.stringify(this.store));
+
+            saveWorkspace()
+        },
+        modal: function (name) {
+
+            this.store = JSON.parse(localStorage.getItem(name));
+        },
+
+
+
+
     },
 
     mounted() {
         // page is ready
-        console.log('page is ready!')
+        console.log('page is ready!');
+        this.showData()
     },
 })
 
