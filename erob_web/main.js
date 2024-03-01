@@ -5,7 +5,7 @@ const app = Vue.createApp({
         return {
             // ros connection
             ros: null,
-            config: false,
+            config: true,
             rosbridge_address: 'ws://127.0.0.1:9090/',
             connected: false,
             error: false,
@@ -161,16 +161,25 @@ const app = Vue.createApp({
             this.catList.splice(index, 1);
             localStorage.setItem("catlist", JSON.stringify(this.catList));
         },
-        docycle: function () {
+        docycle: async function () {
             this.store = JSON.parse(localStorage.getItem(this.catTitle));
             for (pos in this.store) {
-                console.log(pos)
-                send(pos)
-                while (this.reach(pos));
-                sleep(pos.delay * 1000);
+                console.log(this.store[pos].value)
+                this.sendWithTarget(this.store[pos].value)
+
+                console.log(this.store[pos].value.delay )
+                console.log(this.store[pos].value.title)
+
+                while (!this.reach(this.store[pos].value))
+                    {
+                        await this.sleep(100)
+                        // await console.log('wait')
+                        
+                    }
+                await this.sleep(this.store[pos].value.delay-1 * 1000);
             }
         },
-        doOperations: function () {
+        doOperations: async function () {
             this.catList = JSON.parse(localStorage.getItem('catlist'));
             // console.log(this.catList[0])
             for (item in this.catList) {
@@ -179,10 +188,15 @@ const app = Vue.createApp({
                 for (pos in data) {
                     // console.log(pos)
                     if (data[pos].type == "Arm"){
+                        console.log(data[pos].value.delay)
+                        this.sendWithTarget(data[pos].value)
                         console.log(data[pos].value)
-                        this.send(data[pos].value)
-                        while (this.reach(data[pos].value));
-                        sleep(data[pos].value.delay * 1000);
+                        while (!this.reach(data[pos].value))
+                        {
+                            await this.sleep(100)
+                            console.log('wait')                            
+                        }
+                        await this.sleep(data[pos].value.delay-1 * 1000);
                     }
                     else
                     {
@@ -197,22 +211,26 @@ const app = Vue.createApp({
 
         },
         reach: function (target) {
-            if (cposition.Joint1 != target.joint1)
+            // console.log(Math.round(this.cposition.Joint1))
+            // console.log(target.joint1)
+  
+            if ( Math.round( this.cposition.Joint1) != target.joint1)            
                 return false;
-            if (cposition.Joint2 != target.joint2)
+            if ( Math.round(  this.cposition.Joint2 )!=  target.joint2 ) 
                 return false;
-            if (cposition.Joint3 != target.joint3)
+            if (  Math.round( this.cposition.Joint3) !=target.joint3 ) 
                 return false;
-            if (cposition.Joint4 != target.joint4)
+            if ( Math.round(  this.cposition.Joint4) !=target.joint4 ) 
                 return false;
-            if (cposition.Joint5 != target.joint5)
+            if ( Math.round(  this.cposition.Joint5) !=target.joint5 ) 
                 return false;
-            if (cposition.Joint6 != target.joint6)
+            if ( Math.round(  this.cposition.Joint6) !=target.joint6 ) 
                 return false;
             return true;
         },
-        sleep(milliseconds) {
-            return new Promise((resolve) => setTimeout(resolve, milliseconds));
+        sleep: function(milliseconds) {
+            // return new Promise((resolve) => setTimeout(resolve, milliseconds));
+            return new Promise(resolve => setTimeout(resolve, milliseconds));
         },
         currentPosition: function () {
             this.j1 = Math.round(this.cposition.Joint1)
@@ -291,7 +309,7 @@ const app = Vue.createApp({
             this.addItem()
 
         },
-        send: function (target) {
+        sendWithTarget: function (target) {
             var cmdVel = new ROSLIB.Topic({
                 ros: this.ros,
                 name: "/arm/command",
@@ -313,7 +331,7 @@ const app = Vue.createApp({
                 velocity: [newspeed, newspeed, newspeed, newspeed, newspeed, newspeed],
                 effort: [],
             });
-            // cmdVel.publish(JointState);
+            cmdVel.publish(JointState);
 
             // this.addItem()
 

@@ -130,7 +130,7 @@
                     <div class="card-body">
                         <!-- <span id="publisher"></span> -->
                         <ul>
-                            <li v-for="(x,index) in cposition">{{index}}: {{Math.round(x)}}</li>
+                            <li v-for="(x,index) in cposition">{{index}}: {{x.toFixed(2)}} </li>
                         </ul>
                     </div>
 
@@ -677,7 +677,7 @@
                                             <th>
                                                 {{x.name}}</td>
                                             <td>
-                                                <button @click="DeleteFromCatList(catList,index)"
+                                                <button @click="DeleteFromCatList(index)"
                                                     class="btn btn-sm btn-danger"><svg
                                                         xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                         fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
@@ -814,7 +814,7 @@
         </div>
 
     </div>
-    <input type="file" id="file-input" />
+    <input type="file" id="file-input" hidden/>
     <pre id="file-content" hidden></pre>
 
     <!-- <script>
