@@ -6,7 +6,7 @@ const app = Vue.createApp({
             // ros connection
             ros: null,
             config: true,
-            rosbridge_address: 'ws://127.0.0.1:9090/',
+            rosbridge_address: 'ws://192.168.1.70:9090/',
             connected: false,
             error: false,
             // subscriber data
@@ -34,27 +34,25 @@ const app = Vue.createApp({
             speed: 100,
             store: [],
             catTitle: '',
+            actuatorName: '',
             actionName: '',
-            actionList: [
-                { "name": "Pick Up", "actionCmd": "/hand/pickup" },
-                { "name": "Drop Off", "actionCmd": "/hand/dropoff" },
-                { "name": "Go Home", "actionCmd": "/hand/home" },
-                { "name": "Action 1", "actionCmd": "/hand/action1" },
-                { "name": "Action 2", "actionCmd": "/hand/action2" },
-                { "name": "Action 3", "actionCmd": "/hand/action3" },
-                { "name": "Action 4", "actionCmd": "/hand/action4" },
-            ],
+           
+            actionList: [],
             blink: 1,
             buzz: 1,
 
             catList: [],
             ShowOperations: false,
-           
+
         }
     },
     methods: {
+
+
+
         connect: function () {
             // define ROSBridge connection object
+            console.log(this.rosbridge_address)
             this.ros = new ROSLIB.Ros({
                 url: this.rosbridge_address
             })
@@ -77,6 +75,7 @@ const app = Vue.createApp({
                 console.log('Connection to ROSBridge was closed!')
             })
             this.showData()
+
         },
         showData: function () {
             try {
@@ -86,7 +85,7 @@ const app = Vue.createApp({
                     localStorage.setItem(this.catTitle, JSON.stringify(this.store));
                 }
                 else {
-                    
+
                     this.store = JSON.parse(localStorage.getItem(this.catTitle));
                 }
             }
@@ -103,13 +102,29 @@ const app = Vue.createApp({
                 this.catList = JSON.parse(localStorage.getItem('catlist'));
             }
 
-       
+
 
 
         },
         disconnect: function () {
             this.ros.close()
         },
+
+
+
+        ActuatorCommand: function (action) {
+            var cmdVel = new ROSLIB.Topic({
+                ros: this.ros,
+                name: action.actionCmd,
+                messageType: "std_msgs/msg/String",
+            });
+            var msg = new ROSLIB.Message({
+                data: action.action
+            });
+
+            cmdVel.publish(msg);
+        },
+
 
         Stop: function () {
             var cmdVel = new ROSLIB.Topic({
@@ -147,7 +162,7 @@ const app = Vue.createApp({
             }
             this.history.push(item)
 
-            this.$refs.table.scrollIntoView({ block: "end" });
+            // this.$refs.table.scrollIntoView({ block: "end" });
         },
 
 
@@ -167,16 +182,15 @@ const app = Vue.createApp({
                 console.log(this.store[pos].value)
                 this.sendWithTarget(this.store[pos].value)
 
-                console.log(this.store[pos].value.delay )
+                console.log(this.store[pos].value.delay)
                 console.log(this.store[pos].value.title)
 
-                while (!this.reach(this.store[pos].value))
-                    {
-                        await this.sleep(100)
-                        // await console.log('wait')
-                        
-                    }
-                await this.sleep(this.store[pos].value.delay-1 * 1000);
+                while (!this.reach(this.store[pos].value)) {
+                    await this.sleep(100)
+                    // await console.log('wait')
+
+                }
+                await this.sleep(this.store[pos].value.delay - 1 * 1000);
             }
         },
         doOperations: async function () {
@@ -184,27 +198,52 @@ const app = Vue.createApp({
             // console.log(this.catList[0])
             for (item in this.catList) {
                 let data = JSON.parse(localStorage.getItem(this.catList[item].name));
-                // console.log(data)
+                console.log(data)
                 for (pos in data) {
                     // console.log(pos)
-                    if (data[pos].type == "Arm"){
-                        console.log(data[pos].value.delay)
-                        this.sendWithTarget(data[pos].value)
-                        console.log(data[pos].value)
-                        while (!this.reach(data[pos].value))
-                        {
-                            await this.sleep(100)
-                            console.log('wait')                            
-                        }
-                        await this.sleep(data[pos].value.delay-1 * 1000);
+                    console.log(data[pos])
+                    switch (data[pos].type) {
+                        case "Arm":
+                            console.log(data[pos].value.delay)
+                            this.sendWithTarget(data[pos].value)
+                            while (!this.reach(data[pos].value)) {
+                                await this.sleep(100)
+                                console.log('wait')
+                            }
+                            await this.sleep(data[pos].value.delay - 1 * 1000);
+                            break;
+                        case "LED":
+                            let LEDaction = {
+                                "action": data[pos].value.reapet,
+                                 "actionCmd": "/actuator/led"
+                            }
+                            this.ActuatorCommand(LEDaction)
+                            break;
+                        case "Buzzer":
+                            let Buzzeraction = {
+                                "action": data[pos].value.reapet,
+                                 "actionCmd": "/actuator/buzzer"
+                            }
+                            this.ActuatorCommand(Buzzeraction)
+                            break;
+                        case "Hand":                            
+                            this.ActuatorCommand(data[pos].value)
+                            break;
                     }
-                    else
-                    {
-                        console.log(data[pos].type)
-                    }
-                    // send(pos)
-                    // while (this.reach(pos));
-                    // sleep(pos.delay * 1000);
+                    // if (data[pos].type == "Arm") {
+                    //     console.log(data[pos].value.delay)
+                    //     this.sendWithTarget(data[pos].value)
+                    //     console.log(data[pos].value)
+                    //     while (!this.reach(data[pos].value)) {
+                    //         await this.sleep(100)
+                    //         console.log('wait')
+                    //     }
+                    //     await this.sleep(data[pos].value.delay - 1 * 1000);
+                    // }
+                    // else {
+                    //     console.log(data[pos].type)
+                    // }
+
                 }
             }
 
@@ -213,22 +252,22 @@ const app = Vue.createApp({
         reach: function (target) {
             // console.log(Math.round(this.cposition.Joint1))
             // console.log(target.joint1)
-  
-            if ( Math.round( this.cposition.Joint1) != target.joint1)            
+
+            if (Math.round(this.cposition.Joint1) != target.joint1)
                 return false;
-            if ( Math.round(  this.cposition.Joint2 )!=  target.joint2 ) 
+            if (Math.round(this.cposition.Joint2) != target.joint2)
                 return false;
-            if (  Math.round( this.cposition.Joint3) !=target.joint3 ) 
+            if (Math.round(this.cposition.Joint3) != target.joint3)
                 return false;
-            if ( Math.round(  this.cposition.Joint4) !=target.joint4 ) 
+            if (Math.round(this.cposition.Joint4) != target.joint4)
                 return false;
-            if ( Math.round(  this.cposition.Joint5) !=target.joint5 ) 
+            if (Math.round(this.cposition.Joint5) != target.joint5)
                 return false;
-            if ( Math.round(  this.cposition.Joint6) !=target.joint6 ) 
+            if (Math.round(this.cposition.Joint6) != target.joint6)
                 return false;
             return true;
         },
-        sleep: function(milliseconds) {
+        sleep: function (milliseconds) {
             // return new Promise((resolve) => setTimeout(resolve, milliseconds));
             return new Promise(resolve => setTimeout(resolve, milliseconds));
         },
@@ -297,7 +336,7 @@ const app = Vue.createApp({
             // rj4 = (parseFloat(j4) * Math.PI) / 180;
             // rj5 = (parseFloat(j5) * Math.PI) / 180;
             // rj6 = (parseFloat(j6) * Math.PI) / 180;
-            let newspeed = this.speed * 4;
+            let newspeed = this.speed * 3;
             var JointState = new ROSLIB.Message({
                 name: ["j1", "j2", "j3", "j4", "j5", "j6"],
                 position: [rj1, rj2, rj3, rj4, rj5, rj6],
@@ -324,7 +363,7 @@ const app = Vue.createApp({
             rj5 = (target.joint5 * Math.PI) / 180;
             rj6 = (target.joint6 * Math.PI) / 180;
 
-            let newspeed = this.speed * 4;
+            let newspeed = this.speed * 3;
             var JointState = new ROSLIB.Message({
                 name: ["j1", "j2", "j3", "j4", "j5", "j6"],
                 position: [rj1, rj2, rj3, rj4, rj5, rj6],
@@ -341,7 +380,7 @@ const app = Vue.createApp({
         },
         clearPositions: function () {
             localStorage.setItem('', JSON.stringify([]));
-            this.store=[];
+            this.store = [];
         },
         todo: function () {
             this.intervalid1 = setInterval(() => {
@@ -469,13 +508,16 @@ const app = Vue.createApp({
             let item = {
                 type: "Hand",
                 value: {
-                    action: this.actionName,
+                    actuator: this.actuatorName,
+                    action: this.actionName.action,
+                    command: this.actionName.actionCmd,
                 }
             }
             // let positions = localStorage.getItem("positions");
             // positions.addItem(item);
             this.store.push(item)
             localStorage.setItem(this.catTitle, JSON.stringify(this.store));
+            this.actionName = ''
 
         },
         AddToCatList: function () {
@@ -508,6 +550,7 @@ const app = Vue.createApp({
     mounted() {
         // page is ready
         console.log('page is ready!');
+        this.actionList = actuators;
         this.showData()
     },
 })

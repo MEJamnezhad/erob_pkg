@@ -23,7 +23,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'erob_node = erob_pkg.erob_node:main'
+            'erob_node = erob_pkg.erob_node:main',
+           
         ],
     },
 )

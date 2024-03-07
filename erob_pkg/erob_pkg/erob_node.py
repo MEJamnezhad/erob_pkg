@@ -85,7 +85,7 @@ def changeTo_OP_Ethercat(slave, pos):
         
         master.send_processdata()
         master.receive_processdata(timeout=2000)
-        sleep(0.02)
+        # sleep(0.02)
 #-----------------------------------------------------
 def shutdownAll():
     for i,device in enumerate(master.slaves):        
@@ -132,10 +132,10 @@ def changeTo_OP_Enable(device,idx):
             download(device,idx,0x6040,0,value=0x0080,message='Clear Fault')
             download(device,idx,0x60FF,0,value=0,message='Target velocity set 0') 
 
-            sleep(0.05)
+            # sleep(0.05)
             master.send_processdata()
             master.receive_processdata(2000)        
-            sleep(0.05)
+            # sleep(0.05)
             result = upload(device,idx,0x6041,0,'H',message='Check')
 
         # result = upload(device,idx,0x6041,0,'H',message='Check state2')  
@@ -151,18 +151,18 @@ def changeTo_OP_Enable(device,idx):
         if (val == 0b1010000) or (val == 0b1000000):
            download(device,idx,0x60FF,0,value=0,message='Target velocity set 0')  
            download(device,idx,0x6040,0,value=0x0006,message='Set ready to switch on')
-           sleep(0.05)
+        #    sleep(0.05)
 
      
         if (val == 0b0110001) or (val == 0b0100001): 
             download(device,idx,0x60FF,0,value=0,message='Target velocity set 0')  
             download(device,idx,0x6040,0,value=0x0007,message='Set switch on')
-            sleep(0.05)        
+            # sleep(0.05)        
         
         if (val == 0b0110011) or (val == 0b0100011):  
             download(device,idx,0x60FF,0,value=0,message='Target velocity set 0')  
             download(device,idx,0x6040,0,value=0x000f,message='Set Enable operation')
-            sleep(0.05)    
+            # sleep(0.05)    
 # --------------------------------
 def changeTo_OP_Enable2(device,idx):
 
@@ -328,7 +328,7 @@ def mainapp():
             for i,device in enumerate(master.slaves):
                 changeTo_OP_Enable(device,i)   
                 
-            download(master.slaves[0],0,0x2242,0,value=1,message='Reset Encoder')
+            # download(master.slaves[0],0,0x2242,0,value=1,message='Reset Encoder')
 
             print('=================================================')
             
