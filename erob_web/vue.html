@@ -102,7 +102,7 @@
                         <h5>ROSBridge & Vue Js</h5>
                         <label>ROSBridge address</label>
                         <br />
-                        <input type="text" class="form-control" value="ws://127.0.0.1:9090/" />
+                        <input type="text" v-model="rosbridge_address" class="form-control" value="ws://127.0.0.1:9090/" />
 
 
                         <button class="mt-2 btn btn-success" v-if="connected" @click="disconnect">Connected!</button>
@@ -178,12 +178,11 @@
                 <div v-if="config">
                     <div class="card mt-2">
                         <div class=" card-header">
-                            <b> <a data-toggle="collapse" data-parent="#cardOperations"
-                                    href="#cardOperations">Operations</a> </b>
+                            <b> <a data-toggle="collapse" data-parent="#cardOperations" href="#cardOperations">Operations</a> </b>
                             <!-- <button  data-toggle="collapse" data-target="#demo">Simple collapsible</button> -->
                         </div>
 
-                        <div class=" card-body" id="cardOperations">
+                        <div class=" card-body" id="cardOperations" >
 
                             <div class="row">
                                 <div class="col-md-9 m-0 p-0">
@@ -439,7 +438,7 @@
                         <div id="cardList">
 
 
-                            <div class="card card-body">
+                            <div class="card card-body" >
 
                                 <!-- <div class="table-responsive" style="max-height: 50vh;">
 
@@ -589,6 +588,7 @@
                                     <div class="col-md-6 ">
 
                                         <button class="btn btn-success col-md-4" @click="docycle"> RUN </button>
+
                                     </div>
                                     <div class="col-md-6 text-right">
 

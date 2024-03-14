@@ -6,9 +6,12 @@ const app = Vue.createApp({
             // ros connection
             ros: null,
             config: true,
-            rosbridge_address: 'ws://192.168.1.70:9090/',
+            rosbridge_address: 'ws://192.168.1.69:9090/',
             connected: false,
             error: false,
+            actuatorDone: true,
+            serial_msg: "done",
+            run: true,
             // subscriber data
             cposition: {
                 Joint1: 0.0,
@@ -36,7 +39,7 @@ const app = Vue.createApp({
             catTitle: '',
             actuatorName: '',
             actionName: '',
-           
+
             actionList: [],
             blink: 1,
             buzz: 1,
@@ -62,6 +65,9 @@ const app = Vue.createApp({
                 this.connected = true
                 console.log('Connection to ROSBridge established!')
 
+
+                localStorage.setItem("RUN", "");
+                localStorage.setItem("ite", 0);
                 this.todo()
 
             })
@@ -113,15 +119,18 @@ const app = Vue.createApp({
 
 
         ActuatorCommand: function (action) {
+            // console.log("Action:")
+            console.log(action)
             var cmdVel = new ROSLIB.Topic({
                 ros: this.ros,
                 name: action.actionCmd,
                 messageType: "std_msgs/msg/String",
             });
             var msg = new ROSLIB.Message({
-                data: action.action
+                data: action.action.toString()
             });
-
+            // console.log(msg)
+            // console.log(cmdVel)
             cmdVel.publish(msg);
         },
 
@@ -178,77 +187,378 @@ const app = Vue.createApp({
         },
         docycle: async function () {
             this.store = JSON.parse(localStorage.getItem(this.catTitle));
-            for (pos in this.store) {
-                console.log(this.store[pos].value)
-                this.sendWithTarget(this.store[pos].value)
+            // for (pos in this.store) {
+            //     console.log(this.store[pos].value)
+            //     this.sendWithTarget(this.store[pos].value)
 
-                console.log(this.store[pos].value.delay)
-                console.log(this.store[pos].value.title)
+            //     console.log(this.store[pos].value.delay)
+            //     console.log(this.store[pos].value.title)
 
-                while (!this.reach(this.store[pos].value)) {
-                    await this.sleep(100)
-                    // await console.log('wait')
+            //     while (!this.reach(this.store[pos].value)) {
+            //         await this.sleep(100)
+            //         // await console.log('wait')
 
-                }
-                await this.sleep(this.store[pos].value.delay - 1 * 1000);
-            }
+            //     }
+            //     await this.sleep(this.store[pos].value.delay - 1 * 1000);
+            // }
+            let data = this.store;
+            this.Operate(data)
         },
         doOperations: async function () {
             this.catList = JSON.parse(localStorage.getItem('catlist'));
             // console.log(this.catList[0])
+            let run=[]
             for (item in this.catList) {
                 let data = JSON.parse(localStorage.getItem(this.catList[item].name));
-                console.log(data)
-                for (pos in data) {
-                    // console.log(pos)
-                    console.log(data[pos])
-                    switch (data[pos].type) {
-                        case "Arm":
-                            console.log(data[pos].value.delay)
-                            this.sendWithTarget(data[pos].value)
-                            while (!this.reach(data[pos].value)) {
-                                await this.sleep(100)
-                                console.log('wait')
-                            }
-                            await this.sleep(data[pos].value.delay - 1 * 1000);
-                            break;
-                        case "LED":
-                            let LEDaction = {
-                                "action": data[pos].value.reapet,
-                                 "actionCmd": "/actuator/led"
-                            }
-                            this.ActuatorCommand(LEDaction)
-                            break;
-                        case "Buzzer":
-                            let Buzzeraction = {
-                                "action": data[pos].value.reapet,
-                                 "actionCmd": "/actuator/buzzer"
-                            }
-                            this.ActuatorCommand(Buzzeraction)
-                            break;
-                        case "Hand":                            
-                            this.ActuatorCommand(data[pos].value)
-                            break;
-                    }
-                    // if (data[pos].type == "Arm") {
-                    //     console.log(data[pos].value.delay)
-                    //     this.sendWithTarget(data[pos].value)
-                    //     console.log(data[pos].value)
-                    //     while (!this.reach(data[pos].value)) {
-                    //         await this.sleep(100)
-                    //         console.log('wait')
-                    //     }
-                    //     await this.sleep(data[pos].value.delay - 1 * 1000);
-                    // }
-                    // else {
-                    //     console.log(data[pos].type)
-                    // }
+                // console.log(data)
+                // for (pos in data) {
+                //     // console.log(pos)
+                //     // console.log(data[pos])
+                //     switch (data[pos].type) {
+                //         case "Arm":
+                //             console.log(data[pos].value.delay)
+                //             this.sendWithTarget(data[pos].value)
+                //             while (!this.reach(data[pos].value)) {
+                //                 await this.sleep(100)
+                //                 console.log('wait')
+                //             }
+                //             await this.sleep(data[pos].value.delay - 1 * 1000);
+                //             break;
+                //         case "LED":
+                //             let LEDaction = {
+                //                 "action": data[pos].value.reapet,
+                //                 "actionCmd": "/led/command"
+                //             }
+                //             this.ActuatorCommand(LEDaction)
+                //             break;
+                //         case "Buzzer":
+                //             let Buzzeraction = {
+                //                 "action": data[pos].value.reapet,
+                //                 "actionCmd": "/buzzer/command"
+                //             }
+                //             this.ActuatorCommand(Buzzeraction)
+                //             break;
+                //         case "Hand":
+                //             this.ActuatorCommand(data[pos].value)
+                //             break;
+                //     }
+                //     // if (data[pos].type == "Arm") {
+                //     //     console.log(data[pos].value.delay)
+                //     //     this.sendWithTarget(data[pos].value)
+                //     //     console.log(data[pos].value)
+                //     //     while (!this.reach(data[pos].value)) {
+                //     //         await this.sleep(100)
+                //     //         console.log('wait')
+                //     //     }
+                //     //     await this.sleep(data[pos].value.delay - 1 * 1000);
+                //     // }
+                //     // else {
+                //     //     console.log(data[pos].type)
+                //     // }
 
+                // }
+                for (pos in data)
+                {
+                    run.push(data[pos])
                 }
             }
+            this.Operate(run)
 
 
         },
+
+        // Operate: async function (data) {
+        //     let sleepTime = 500
+        //     // for (pos in data) {
+        //     let pos = 0;
+        //     while (pos < data.length) {
+        //         // console.log(pos)
+        //         // console.log(data[pos].type)
+
+        //         if (data[pos].type == "Arm") {
+        //             // console.log(data[pos].value.delay)
+        //             this.sendWithTarget(data[pos].value)
+        //             // while (!this.reach(data[pos].value)) {
+        //             //     await this.sleep(100)
+        //             //     console.log('wait')
+        //             // }
+        //             // await this.sleep(data[pos].value.delay - 1 * 1000);
+        //             // this.serial_msg = "working"
+
+        //             console.log(data[pos])
+
+        //             /////// wait
+        //             pos++;
+
+        //         }
+
+        //         else {
+
+        //             // await this.sleep(500);
+        //             if (this.actuatorDone == true && this.serial_msg == "done") {
+        //                 // let msg = "";
+        //                 // this.sleep(1000)
+
+        //                 if (data[pos].type == "LED") {
+        //                     let LEDaction = {
+        //                         "action": data[pos].value.reapet,
+        //                         "actionCmd": "/led/command"
+        //                     }
+        //                     this.serial_msg = "led"
+        //                     // msg = "led"
+        //                     this.ActuatorCommand(LEDaction)
+        //                     // this.ActuatorState(msg)
+        //                     // while (!this.ActuatorState("led")) {
+        //                     //     await this.sleep(200)
+        //                     //     console.log("wait LED")
+        //                     // }
+
+
+        //                 }
+
+        //                 else if (data[pos].type == "Buzzer") {
+        //                     let Buzzeraction = {
+        //                         "action": data[pos].value.reapet,
+        //                         "actionCmd": "/buzzer/command"
+        //                     }
+        //                     this.serial_msg = "buz"
+        //                     // msg = "buz"
+        //                     this.ActuatorCommand(Buzzeraction)
+        //                     // this.ActuatorState(msg)
+        //                     // while (!this.ActuatorState("buz")) {
+        //                     //     await this.sleep(200)
+        //                     //     console.log("wait BUZZER")
+        //                     // }
+
+        //                 }
+
+        //                 else if (data[pos].type == "Hand") {
+        //                     let handaction = {
+        //                         "action": data[pos].value.action,
+        //                         "actionCmd": "/hand/command"
+        //                     }
+        //                     let msg = ""
+        //                     if (data[pos].value.action == "pickup") {
+        //                         this.serial_msg = "up"
+        //                         msg = "up";
+        //                     }
+        //                     else {
+        //                         this.serial_msg = "off"
+        //                         msg = "off";
+        //                     }
+        //                     this.ActuatorCommand(handaction);
+        //                     // this.ActuatorState(msg);
+        //                     // while (true) {
+        //                     //     let dd = this.ActuatorState(msg)
+        //                     //     console.log(dd)
+        //                     //     await this.sleep(500)
+        //                     //     console.log("wait HAND")
+        //                     // }
+        //                     console.log("exit")
+
+        //                 }
+
+        //                 // console.log(msg)
+        //                 // console.log(this.serial_msg)
+        //                 // console.log(this.actuatorDone)
+
+        //                 // while (this.serial_msg != "working") {
+        //                 pos++;
+        //                 // await this.sleep(1000)
+        //                 console.log("Next---------------------")
+        //             }
+
+        //             // while (!this.ActuatorState(msg)) {
+        //             //     await this.sleep(1000)
+        //             //     // console.log(this.serial_msg)
+        //             //     if (this.actuatorDone == true) {
+        //             //         console.log(x)
+        //             //         x++;
+        //             //     }
+        //             // }
+
+        //         }
+
+        //     }
+
+        //     console.log("Dddddddddddddddddddddddddddddddddddddd")
+
+        // },
+
+        Operate: async function (data) {
+            console.log(data)
+            localStorage.setItem("RUN", JSON.stringify(data));
+            localStorage.setItem("ite", 0);
+            this.DO();
+
+
+        },
+
+        DO: async function (data) {
+            let command = JSON.parse(localStorage.getItem("RUN"));
+            let pos = localStorage.getItem("ite");
+            
+            if (command[pos] == null ) {
+                // console.log("nothinggggggggggggggggggg")
+                return};
+
+            console.log(command[pos])
+            if (command[pos].type == "Arm") {
+                this.sendWithTarget(command[pos].value)
+                // while (!this.reach(data[pos].value)) {
+                //     await this.sleep(100)
+                //     console.log('wait')
+                // }
+                // await this.sleep(data[pos].value.delay - 1 * 1000);
+                // this.serial_msg = "working"
+
+                console.log(data[pos])
+
+                /////// wait
+                pos++;
+
+            }
+
+            else {
+
+
+
+                if (command[pos].type == "LED") {
+                    let LEDaction = {
+                        "action": command[pos].value.reapet,
+                        "actionCmd": "/led/command"
+                    }
+                    this.serial_msg = "led"
+                    // msg = "led"
+                    this.ActuatorCommand(LEDaction)
+
+                }
+
+                else if (command[pos].type == "Buzzer") {
+                    let Buzzeraction = {
+                        "action": command[pos].value.reapet,
+                        "actionCmd": "/buzzer/command"
+                    }
+                    this.serial_msg = "buz"
+                    // msg = "buz"
+                    this.ActuatorCommand(Buzzeraction)
+
+                }
+
+                else if (command[pos].type == "Hand") {
+                    let handaction = {
+                        "action": command[pos].value.action,
+                        "actionCmd": "/hand/command"
+                    }
+                    let msg = ""
+                    if (command[pos].value.action == "pickup") {
+                        this.serial_msg = "up"
+                        msg = "up";
+                    }
+                    else {
+                        this.serial_msg = "off"
+                        msg = "off";
+                    }
+                    this.ActuatorCommand(handaction);
+
+                    // console.log("exit")
+
+                }
+
+
+                // await this.sleep(1000)
+                // console.log("Next---------------------")
+
+
+
+
+            }
+            pos++;
+            localStorage.setItem("ite", pos);
+
+        },
+
+
+        ARMState: function () {
+            this.run = true
+            var listener = new ROSLIB.Topic({
+                ros: this.ros,
+                name: "/arm/run",
+                messageType: "std_msgs/msg/String"
+            });
+            listener.subscribe((message) => {
+                // console.log(message.data)
+                if (message.data == "1") {
+                    this.run = true
+                    // console.log(message)
+                }
+                else {
+                    this.run = false;
+                }
+                // this.actuatorDone=  message.data.includes(this.serial_msg)
+                // console.log(this.actuatorDone)
+            });
+
+            return this.run;
+            // return item
+        },
+        ActuatorState: function (msg) {
+            var done = false;
+            var listener = new ROSLIB.Topic({
+                ros: this.ros,
+                name: "/actuator/state",
+                messageType: "std_msgs/msg/String"
+            });
+            // let back = false;
+            listener.subscribe((message) => {
+
+                if (message.data.includes(msg)) {
+                    console.log(message.data.trim(), "*********", msg)
+                    this.actuatorDone = true;
+                    this.serial_msg = "done"
+                    done = true
+                }
+                else {
+                    this.actuatorDone = false;
+                    done = false
+                }
+                // this.actuatorDone = message.data.includes(msg)
+            });
+            // console.log(this.actuatorDone)
+            // console.log(back)
+            // // return this.actuatorDone;
+            return done;
+
+            // return item
+        },
+
+        ActuatorState2: function () {
+            var listener = new ROSLIB.Topic({
+                ros: this.ros,
+                name: "/actuator/state",
+                messageType: "std_msgs/msg/String"
+            });
+            // let back = false;
+            listener.subscribe((message) => {
+
+                if (message.data.includes(this.serial_msg)) {
+                    // console.log(message.data.trim(), "*********", this.serial_msg)
+
+                    this.DO()
+
+
+                }
+                else {
+                    this.actuatorDone = false;
+                }
+            });
+            // console.log(this.actuatorDone)
+
+            // // return this.actuatorDone;
+
+            // return item
+        },
+
         reach: function (target) {
             // console.log(Math.round(this.cposition.Joint1))
             // console.log(target.joint1)
@@ -270,6 +580,10 @@ const app = Vue.createApp({
         sleep: function (milliseconds) {
             // return new Promise((resolve) => setTimeout(resolve, milliseconds));
             return new Promise(resolve => setTimeout(resolve, milliseconds));
+        },
+
+        sleepNow: function (delay) {
+            new Promise((resolve) => setTimeout(resolve, delay))
         },
         currentPosition: function () {
             this.j1 = Math.round(this.cposition.Joint1)
@@ -385,7 +699,9 @@ const app = Vue.createApp({
         todo: function () {
             this.intervalid1 = setInterval(() => {
                 this.showPosition();
-            }, 1000);
+                this.ARMState();
+                this.ActuatorState2();
+            }, 500);
 
         },
         getKey(evt) {
@@ -509,8 +825,8 @@ const app = Vue.createApp({
                 type: "Hand",
                 value: {
                     actuator: this.actuatorName,
-                    action: this.actionName.action,
-                    command: this.actionName.actionCmd,
+                    action: this.actionName.actionCmd,
+                    actionCmd: "/hand/command",
                 }
             }
             // let positions = localStorage.getItem("positions");
