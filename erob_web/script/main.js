@@ -875,7 +875,8 @@ const app = Vue.createApp({
     mounted() {
         // page is ready
         console.log('page is ready!');
-        // this.actionList = actuators;
+        //Hand Menu
+        this.actionList = actuators;
         this.showData()
     },
 })

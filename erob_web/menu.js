@@ -1,1 +1,31 @@
-[{"type":"Arm","value":{"title":"init","joint1":"0","joint2":"56","joint3":"-46","joint4":"-13","joint5":"-90","joint6":"90","speed":"100","delay":"0"}},{"type":"Hand","value":{"actuator":"Hand","action":"pickup"}},{"type":"Arm","value":{"title":"first","joint1":"0","joint2":"58","joint3":"-46","joint4":"-13","joint5":"-90","joint6":"90","speed":"20","delay":"0"}},{"type":"Arm","value":{"title":"","joint1":"0","joint2":"56","joint3":"-46","joint4":"-13","joint5":"-90","joint6":"90","speed":"100","delay":"0"}},{"type":"Arm","value":{"title":"Second","joint1":"37","joint2":"58","joint3":"-46","joint4":"-13","joint5":"-90","joint6":"123","speed":"100","delay":"0"}},{"type":"Hand","value":{"actuator":"Hand","action":"dropoff"}}]
+let actuators=[
+    {
+        "name": "Hand",
+        "actions" :[
+            { "action": "Pick Up", "actionCmd": "pickup" },
+            { "action": "Drop Off", "actionCmd": "dropoff" },
+            { "action": "Go Home", "actionCmd": "home" },
+            { "action": "Aro", "actionCmd": "action1" },
+            { "action": "Action 2", "actionCmd": "action2" },
+            { "action": "Action 3", "actionCmd": "action3" },
+            { "action": "Action 4", "actionCmd": "action4" }
+        ]
+    },
+    {
+        "name": "Actuator 1",
+        "actions" :[
+            { "action": "Action 1", "actionCmd": "actionaction1" },
+            { "action": "Action 2", "actionCmd": "actionaction2" },
+            { "action": "Action 3", "actionCmd": "actionaction3" },
+            { "action": "Action 4", "actionCmd": "actionaction4" }
+        ]
+    },
+    {
+        "name": "Actuator 2",
+        "actions" :[
+            { "action": "Action 1", "actionCmd": "actionaction1" },
+            { "action": "Action 2", "actionCmd": "actionaction2" },
+            { "action": "Action 3", "actionCmd": "actionaction3" }
+        ]
+    }
+]
