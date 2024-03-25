@@ -6,12 +6,12 @@ const app = Vue.createApp({
             // ros connection
             ros: null,
             config: true,
-            rosbridge_address: 'ws://192.168.1.69:9090/',
+            rosbridge_address: 'ws://192.168.1.70:9090/',
             connected: false,
             error: false,
             actuatorDone: true,
             serial_msg: "done",
-            run: true,
+            ArmRunning: true,
             // subscriber data
             cposition: {
                 Joint1: 0.0,
@@ -207,7 +207,7 @@ const app = Vue.createApp({
         doOperations: async function () {
             this.catList = JSON.parse(localStorage.getItem('catlist'));
             // console.log(this.catList[0])
-            let run=[]
+            let run = []
             for (item in this.catList) {
                 let data = JSON.parse(localStorage.getItem(this.catList[item].name));
                 // console.log(data)
@@ -257,8 +257,7 @@ const app = Vue.createApp({
                 //     // }
 
                 // }
-                for (pos in data)
-                {
+                for (pos in data) {
                     run.push(data[pos])
                 }
             }
@@ -394,93 +393,98 @@ const app = Vue.createApp({
 
         },
 
-        DO: async function (data) {
+        DO: async function () {
             let command = JSON.parse(localStorage.getItem("RUN"));
             let pos = localStorage.getItem("ite");
-            
-            if (command[pos] == null ) {
-                // console.log("nothinggggggggggggggggggg")
-                return};
+            if (command[pos] == null) {
+                console.log("nothinggggggggggggggggggg")
+                return
+            };
 
             console.log(command[pos])
-            if (command[pos].type == "Arm") {
+            while (command[pos].type == "Arm") {
+                // if (this.ArmRunning == false) {
                 this.sendWithTarget(command[pos].value)
-                // while (!this.reach(data[pos].value)) {
+                while (!this.reach(command[pos])) {
+                    await this.sleep(100)
+                    console.log('wait')
+                }
+
+                // while (this.ArmRunning == true) {
                 //     await this.sleep(100)
                 //     console.log('wait')
                 // }
+
                 // await this.sleep(data[pos].value.delay - 1 * 1000);
-                // this.serial_msg = "working"
-
-                console.log(data[pos])
-
-                /////// wait
+                // this.serial_msg = "working"       
                 pos++;
+                // this.sleep(500)
+                // }
 
             }
 
-            else {
+            // else {
 
 
 
-                if (command[pos].type == "LED") {
-                    let LEDaction = {
-                        "action": command[pos].value.reapet,
-                        "actionCmd": "/led/command"
-                    }
-                    this.serial_msg = "led"
-                    // msg = "led"
-                    this.ActuatorCommand(LEDaction)
-
+            if (command[pos].type == "LED") {
+                let LEDaction = {
+                    "action": command[pos].value.reapet,
+                    "actionCmd": "/led/command"
                 }
-
-                else if (command[pos].type == "Buzzer") {
-                    let Buzzeraction = {
-                        "action": command[pos].value.reapet,
-                        "actionCmd": "/buzzer/command"
-                    }
-                    this.serial_msg = "buz"
-                    // msg = "buz"
-                    this.ActuatorCommand(Buzzeraction)
-
-                }
-
-                else if (command[pos].type == "Hand") {
-                    let handaction = {
-                        "action": command[pos].value.action,
-                        "actionCmd": "/hand/command"
-                    }
-                    let msg = ""
-                    if (command[pos].value.action == "pickup") {
-                        this.serial_msg = "up"
-                        msg = "up";
-                    }
-                    else {
-                        this.serial_msg = "off"
-                        msg = "off";
-                    }
-                    this.ActuatorCommand(handaction);
-
-                    // console.log("exit")
-
-                }
-
-
-                // await this.sleep(1000)
-                // console.log("Next---------------------")
-
-
-
+                this.serial_msg = "led"
+                // msg = "led"
+                this.ActuatorCommand(LEDaction)
 
             }
+
+            else if (command[pos].type == "Buzzer") {
+                let Buzzeraction = {
+                    "action": command[pos].value.reapet,
+                    "actionCmd": "/buzzer/command"
+                }
+                this.serial_msg = "buz"
+                // msg = "buz"
+                this.ActuatorCommand(Buzzeraction)
+
+            }
+
+            else if (command[pos].type == "Hand") {
+                let handaction = {
+                    "action": command[pos].value.action,
+                    "actionCmd": "/hand/command"
+                }
+                let msg = ""
+                if (command[pos].value.action == "pickup") {
+                    this.serial_msg = "up"
+                    msg = "up";
+                }
+                else {
+                    this.serial_msg = "off"
+                    msg = "off";
+                }
+                this.ActuatorCommand(handaction);
+                // this.sleep(2000);
+                // console.log("exit")
+
+            }
+
+
+            // await this.sleep(1000)
+            // console.log("Next---------------------")
+
+
+
+
+            // }
             pos++;
             localStorage.setItem("ite", pos);
-
+            console.log(pos)
         },
 
 
         ARMState: function () {
-            this.run = true
+            this.ArmRunning = true
             var listener = new ROSLIB.Topic({
                 ros: this.ros,
                 name: "/arm/run",
@@ -489,48 +493,49 @@ const app = Vue.createApp({
             listener.subscribe((message) => {
                 // console.log(message.data)
                 if (message.data == "1") {
-                    this.run = true
+                    this.ArmRunning = true
                     // console.log(message)
                 }
                 else {
-                    this.run = false;
+                    this.ArmRunning = false;
+
                 }
                 // this.actuatorDone=  message.data.includes(this.serial_msg)
                 // console.log(this.actuatorDone)
             });
 
-            return this.run;
+            return this.ArmRunning;
             // return item
         },
-        ActuatorState: function (msg) {
-            var done = false;
-            var listener = new ROSLIB.Topic({
-                ros: this.ros,
-                name: "/actuator/state",
-                messageType: "std_msgs/msg/String"
-            });
-            // let back = false;
-            listener.subscribe((message) => {
+        // ActuatorState: function (msg) {
+        //     var done = false;
+        //     var listener = new ROSLIB.Topic({
+        //         ros: this.ros,
+        //         name: "/actuator/state",
+        //         messageType: "std_msgs/msg/String"
+        //     });
+        //     // let back = false;
+        //     listener.subscribe((message) => {
 
-                if (message.data.includes(msg)) {
-                    console.log(message.data.trim(), "*********", msg)
-                    this.actuatorDone = true;
-                    this.serial_msg = "done"
-                    done = true
-                }
-                else {
-                    this.actuatorDone = false;
-                    done = false
-                }
-                // this.actuatorDone = message.data.includes(msg)
-            });
-            // console.log(this.actuatorDone)
-            // console.log(back)
-            // // return this.actuatorDone;
-            return done;
+        //         if (message.data.includes(msg)) {
+        //             console.log(message.data.trim(), "*********", msg)
+        //             this.actuatorDone = true;
+        //             this.serial_msg = "done"
+        //             done = true
+        //         }
+        //         else {
+        //             this.actuatorDone = false;
+        //             done = false
+        //         }
+        //         // this.actuatorDone = message.data.includes(msg)
+        //     });
+        //     // console.log(this.actuatorDone)
+        //     // console.log(back)
+        //     // // return this.actuatorDone;
+        //     return done;
 
-            // return item
-        },
+        //     // return item
+        // },
 
         ActuatorState2: function () {
             var listener = new ROSLIB.Topic({
@@ -543,10 +548,14 @@ const app = Vue.createApp({
 
                 if (message.data.includes(this.serial_msg)) {
                     // console.log(message.data.trim(), "*********", this.serial_msg)
-
+                    console.log("uppppppppp offffffffff")
                     this.DO()
 
 
+                }
+                else if (message.data.includes("A") || message.data.includes("B")) {
+                    console.log("AAAA BBBBB")
+                    this.DO()
                 }
                 else {
                     this.actuatorDone = false;
@@ -563,17 +572,17 @@ const app = Vue.createApp({
             // console.log(Math.round(this.cposition.Joint1))
             // console.log(target.joint1)
 
-            if (Math.round(this.cposition.Joint1) != target.joint1)
+            if (Math.round(this.cposition.Joint1) != target.value.joint1)
                 return false;
-            if (Math.round(this.cposition.Joint2) != target.joint2)
+            if (Math.round(this.cposition.Joint2) != target.value.joint2)
                 return false;
-            if (Math.round(this.cposition.Joint3) != target.joint3)
+            if (Math.round(this.cposition.Joint3) != target.value.joint3)
                 return false;
-            if (Math.round(this.cposition.Joint4) != target.joint4)
+            if (Math.round(this.cposition.Joint4) != target.value.joint4)
                 return false;
-            if (Math.round(this.cposition.Joint5) != target.joint5)
+            if (Math.round(this.cposition.Joint5) != target.value.joint5)
                 return false;
-            if (Math.round(this.cposition.Joint6) != target.joint6)
+            if (Math.round(this.cposition.Joint6) != target.value.joint6)
                 return false;
             return true;
         },
@@ -866,7 +875,7 @@ const app = Vue.createApp({
     mounted() {
         // page is ready
         console.log('page is ready!');
-        this.actionList = actuators;
+        // this.actionList = actuators;
         this.showData()
     },
 })

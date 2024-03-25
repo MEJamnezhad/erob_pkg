@@ -88,7 +88,7 @@
 
 </head>
 
-<body >
+<body>
     <div id="app" class="container mt-4">
         <div class="row">
             <div class="col-md-3 ">
@@ -102,7 +102,8 @@
                         <h5>ROSBridge & Vue Js</h5>
                         <label>ROSBridge address</label>
                         <br />
-                        <input type="text" v-model="rosbridge_address" class="form-control" value="ws://127.0.0.1:9090/" />
+                        <input type="text" v-model="rosbridge_address" class="form-control"
+                            value="ws://127.0.0.1:9090/" />
 
 
                         <button class="mt-2 btn btn-success" v-if="connected" @click="disconnect">Connected!</button>
@@ -178,11 +179,12 @@
                 <div v-if="config">
                     <div class="card mt-2">
                         <div class=" card-header">
-                            <b> <a data-toggle="collapse" data-parent="#cardOperations" href="#cardOperations">Operations</a> </b>
+                            <b> <a data-toggle="collapse" data-parent="#cardOperations"
+                                    href="#cardOperations">Operations</a> </b>
                             <!-- <button  data-toggle="collapse" data-target="#demo">Simple collapsible</button> -->
                         </div>
 
-                        <div class=" card-body" id="cardOperations" >
+                        <div class=" card-body" id="cardOperations">
 
                             <div class="row">
                                 <div class="col-md-9 m-0 p-0">
@@ -190,10 +192,10 @@
                                         <div class="card card-header">
                                             <div class="row">
 
-                                                <div class="col-md-6 col-sm-6">
+                                                <div class="col-md-6 col-sm-8">
                                                     <b>Set Position <sup>(Degree)</sup> </b>
                                                 </div>
-                                                <div class="col-md-6 col-sm-6 text-right">
+                                                <div class="col-md-6 col-sm-8 text-right">
 
                                                     <button @click="currentPosition"
                                                         class="btn btn-sm   btn-success ml-2">
@@ -204,9 +206,33 @@
                                                                 d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.5 4.002h3.11c1.71 0 2.741.973 2.741 2.46 0 1.138-.667 1.94-1.495 2.24L11.5 12H9.98L8.52 8.924H6.836V12H5.5zm1.335 1.09v2.777h1.549c.995 0 1.573-.463 1.573-1.36 0-.913-.596-1.417-1.537-1.417z" />
                                                         </svg>
                                                     </button>
-                                                    <button class="btn btn-sm  btn-primary ml-2"
-                                                        v-on:keydown="getKey">Active
-                                                        Keyboard</button>
+                                                    <button class="btn btn-sm  btn-primary ml-2" v-on:keydown="getKey"
+                                                        title="Active Keyboard">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                                            fill="currentColor" class="bi bi-keyboard"
+                                                            viewBox="0 0 16 16">
+                                                            <path
+                                                                d="M14 5a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM2 4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z" />
+                                                            <path
+                                                                d="M13 10.25a.25.25 0 0 1 .25-.25h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5a.25.25 0 0 1-.25-.25zm0-2a.25.25 0 0 1 .25-.25h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5a.25.25 0 0 1-.25-.25zm-5 0A.25.25 0 0 1 8.25 8h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5A.25.25 0 0 1 8 8.75zm2 0a.25.25 0 0 1 .25-.25h1.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-1.5a.25.25 0 0 1-.25-.25zm1 2a.25.25 0 0 1 .25-.25h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5a.25.25 0 0 1-.25-.25zm-5-2A.25.25 0 0 1 6.25 8h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5A.25.25 0 0 1 6 8.75zm-2 0A.25.25 0 0 1 4.25 8h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5A.25.25 0 0 1 4 8.75zm-2 0A.25.25 0 0 1 2.25 8h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5A.25.25 0 0 1 2 8.75zm11-2a.25.25 0 0 1 .25-.25h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5a.25.25 0 0 1-.25-.25zm-2 0a.25.25 0 0 1 .25-.25h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5a.25.25 0 0 1-.25-.25zm-2 0A.25.25 0 0 1 9.25 6h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5A.25.25 0 0 1 9 6.75zm-2 0A.25.25 0 0 1 7.25 6h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5A.25.25 0 0 1 7 6.75zm-2 0A.25.25 0 0 1 5.25 6h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5A.25.25 0 0 1 5 6.75zm-3 0A.25.25 0 0 1 2.25 6h1.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-1.5A.25.25 0 0 1 2 6.75zm0 4a.25.25 0 0 1 .25-.25h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5a.25.25 0 0 1-.25-.25zm2 0a.25.25 0 0 1 .25-.25h5.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-5.5a.25.25 0 0 1-.25-.25z" />
+                                                        </svg></button>
+
+                                                    <button class="btn btn-sm  btn-info ml-2" data-toggle="modal"
+                                                        data-target="#myModalkeyboard">
+
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                                            fill="currentColor" class="bi bi-patch-question"
+                                                            viewBox="0 0 16 16">
+                                                            <path
+                                                                d="M8.05 9.6c.336 0 .504-.24.554-.627.04-.534.198-.815.847-1.26.673-.475 1.049-1.09 1.049-1.986 0-1.325-.92-2.227-2.262-2.227-1.02 0-1.792.492-2.1 1.29A1.7 1.7 0 0 0 6 5.48c0 .393.203.64.545.64.272 0 .455-.147.564-.51.158-.592.525-.915 1.074-.915.61 0 1.03.446 1.03 1.084 0 .563-.208.885-.822 1.325-.619.433-.926.914-.926 1.64v.111c0 .428.208.745.585.745" />
+                                                            <path
+                                                                d="m10.273 2.513-.921-.944.715-.698.622.637.89-.011a2.89 2.89 0 0 1 2.924 2.924l-.01.89.636.622a2.89 2.89 0 0 1 0 4.134l-.637.622.011.89a2.89 2.89 0 0 1-2.924 2.924l-.89-.01-.622.636a2.89 2.89 0 0 1-4.134 0l-.622-.637-.89.011a2.89 2.89 0 0 1-2.924-2.924l.01-.89-.636-.622a2.89 2.89 0 0 1 0-4.134l.637-.622-.011-.89a2.89 2.89 0 0 1 2.924-2.924l.89.01.622-.636a2.89 2.89 0 0 1 4.134 0l-.715.698a1.89 1.89 0 0 0-2.704 0l-.92.944-1.32-.016a1.89 1.89 0 0 0-1.911 1.912l.016 1.318-.944.921a1.89 1.89 0 0 0 0 2.704l.944.92-.016 1.32a1.89 1.89 0 0 0 1.912 1.911l1.318-.016.921.944a1.89 1.89 0 0 0 2.704 0l.92-.944 1.32.016a1.89 1.89 0 0 0 1.911-1.912l-.016-1.318.944-.921a1.89 1.89 0 0 0 0-2.704l-.944-.92.016-1.32a1.89 1.89 0 0 0-1.912-1.911z" />
+                                                            <path d="M7.001 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0" />
+                                                        </svg>
+                                                    </button>
+
+
+
                                                 </div>
                                             </div>
                                         </div>
@@ -331,8 +357,10 @@
                                                 </div>
                                                 <!-- <div class="col-md-4"></div> -->
                                                 <div class="col-md-6 col-sm-6 text-right">
-                                                    <button class=" btn btn-primary" @click="send"> Move </button>
-                                                    <button class=" btn btn-danger ml-1" @click="Stop"> Stop </button>
+                                                    <button class=" btn btn-primary" @click="send" v-show="connected">
+                                                        Move </button>
+                                                    <button class=" btn btn-danger ml-1" @click="Stop"
+                                                        v-show="connected"> Stop </button>
 
                                                     <!-- <button class="mt-2 btn btn-success "  @click="Disengage"> Disengage
                                                 Brake </button> -->
@@ -438,7 +466,7 @@
                         <div id="cardList">
 
 
-                            <div class="card card-body" >
+                            <div class="card card-body">
 
                                 <!-- <div class="table-responsive" style="max-height: 50vh;">
 
@@ -495,7 +523,7 @@
 
                         </div> -->
 
-                                <div class="table-responsive" style="max-height: 50vh;">
+                                <div class="table-responsive" style="max-height: 80vh;">
 
 
                                     <table id="storedata" data-pagination="true" data-search="true"
@@ -587,7 +615,8 @@
                                 <div class="row">
                                     <div class="col-md-6 ">
 
-                                        <button class="btn btn-success col-md-4" @click="docycle"> RUN </button>
+                                        <button class="btn btn-success col-md-4" @click="docycle" v-show="connected">
+                                            RUN </button>
 
                                     </div>
                                     <div class="col-md-6 text-right">
@@ -721,7 +750,8 @@
                             </div>
                         </div>
                         <div class="card card-footer">
-                            <button class="btn btn-success col-md-2" @click="doOperations"> RUN </button>
+                            <button class="btn btn-success col-md-2" @click="doOperations" v-show="connected"> RUN
+                            </button>
 
                         </div>
                     </div>
@@ -815,6 +845,92 @@
 
 
 
+                    </div>
+
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="modal fade row" id="myModalkeyboard">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">Keyboard Help</h4>
+                        <button type="button" class="close" data-dismiss="modal">×</button>
+                    </div>
+
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <div class=" text-center">
+                            <h4>* To set the current positions, click on the <svg xmlns="http://www.w3.org/2000/svg" width="20"
+                                    height="20" fill="currentColor" class="bi bi-r-circle" viewBox="0 0 16 16">
+                                    <path
+                                        d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.5 4.002h3.11c1.71 0 2.741.973 2.741 2.46 0 1.138-.667 1.94-1.495 2.24L11.5 12H9.98L8.52 8.924H6.836V12H5.5zm1.335 1.09v2.777h1.549c.995 0 1.573-.463 1.573-1.36 0-.913-.596-1.417-1.537-1.417z" />
+                                </svg>
+                            button
+                            </h4>
+
+                            <h4>
+                               * Click on the <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                    fill="currentColor" class="bi bi-keyboard" viewBox="0 0 16 16">
+                                    <path
+                                        d="M14 5a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM2 4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z" />
+                                    <path
+                                        d="M13 10.25a.25.25 0 0 1 .25-.25h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5a.25.25 0 0 1-.25-.25zm0-2a.25.25 0 0 1 .25-.25h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5a.25.25 0 0 1-.25-.25zm-5 0A.25.25 0 0 1 8.25 8h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5A.25.25 0 0 1 8 8.75zm2 0a.25.25 0 0 1 .25-.25h1.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-1.5a.25.25 0 0 1-.25-.25zm1 2a.25.25 0 0 1 .25-.25h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5a.25.25 0 0 1-.25-.25zm-5-2A.25.25 0 0 1 6.25 8h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5A.25.25 0 0 1 6 8.75zm-2 0A.25.25 0 0 1 4.25 8h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5A.25.25 0 0 1 4 8.75zm-2 0A.25.25 0 0 1 2.25 8h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5A.25.25 0 0 1 2 8.75zm11-2a.25.25 0 0 1 .25-.25h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5a.25.25 0 0 1-.25-.25zm-2 0a.25.25 0 0 1 .25-.25h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5a.25.25 0 0 1-.25-.25zm-2 0A.25.25 0 0 1 9.25 6h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5A.25.25 0 0 1 9 6.75zm-2 0A.25.25 0 0 1 7.25 6h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5A.25.25 0 0 1 7 6.75zm-2 0A.25.25 0 0 1 5.25 6h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5A.25.25 0 0 1 5 6.75zm-3 0A.25.25 0 0 1 2.25 6h1.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-1.5A.25.25 0 0 1 2 6.75zm0 4a.25.25 0 0 1 .25-.25h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5a.25.25 0 0 1-.25-.25zm2 0a.25.25 0 0 1 .25-.25h5.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-5.5a.25.25 0 0 1-.25-.25z" />
+                                </svg> button and press the following keys to move the ARM
+                            </h4>
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Joint</th>
+                                        <th>Clockwise</th>
+                                        <th>Counterclockwise</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Joint 1</td>
+                                        <td>x</td>
+                                        <td>z</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Joint 2</td>
+                                        <td>s</td>
+                                        <td>a</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Joint 3</td>
+                                        <td>w</td>
+                                        <td>q</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Joint 4</td>
+                                        <td>m</td>
+                                        <td>n</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Joint 5</td>
+                                        <td>l</td>
+                                        <td>k</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Joint 6</td>
+                                        <td>p</td>
+                                        <td>o</td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
                     <!-- Modal footer -->
@@ -1066,7 +1182,7 @@
                         rowData["value"] = temp;
                         break;
                 }
-              
+
                 data.push(rowData);
             }
             return data;
@@ -1149,9 +1265,13 @@
         }
         document.getElementById('file-input')
             .addEventListener('change', readSingleFile, false);
+
+
+
+
     </script>
 
-  
+
 </body>
 
 </html>
