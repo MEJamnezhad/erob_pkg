@@ -15,3 +15,36 @@
 # Notes
 - The file */etc/sudoers* was modified to allow current user (**arol6**) to invoke `sudo` without password prompt
   - To modify/read, enter into terminal `sudo visudo`
+
+
+
+
+
+
+
+# The following command will disable GUI on boot hence upon the reboot the system will boot into multi user target:
+  - `$ sudo systemctl set-default multi-user`
+
+## Reboot or log out from a current session to exit GUI:
+- `$ reboot`
+    OR
+- `$ gnome-session-quit`
+
+## How to enable GUI to start on boot
+Given that you have installed GUI on your Ubuntu 22.04 Server/Desktop you can enable the system to start to GUI by execution of the following command:
+- `$ sudo systemctl set-default graphical`
+
+## Start GUI manually from a command line
+For a GNOME GUI installations using GDM as a default display manager you can start GUI from a command line by executing the below command:
+- `$ sudo systemctl start gdm3`
+
+
+# Multi Terminals
+Use alt+ctrl+[F1-F12] to open defferent terminal
+
+
+
+
+
+
+ 

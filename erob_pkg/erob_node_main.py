@@ -111,6 +111,14 @@ def changeTo_OP_Ethercat(slave, pos):
     master.receive_processdata(timeout=2000)
     # sleep(0.02)
 #-----------------------------------------------------
+# def shutdownAll():
+#     for i,device in enumerate(master.slaves):        
+#         shutdown(device,i) 
+    
+#     master.state = pysoem.OP_STATE
+#     master.write_state()
+#     # master.close()
+#-----------------------------------------------------
 def shutdown(device):                      
     """ Change slave state to Init state
 
@@ -146,11 +154,9 @@ def changeTo_OP_Enable(device,idx):
         
         errorcode = upload(device,idx,0x603f,0,'H',message='Error Code')
         if  errorcode > 0:
-            if idx<3:
-                device_VelocityConfig(device,idx)
-            else:
-                small_device_VelocityConfig(device,idx)
-
+            device_VelocityConfig(device,idx)
+            # small_device_VelocityConfig(device,idx)
+            
             download(device,idx,0x6040,0,value=0x0080,message='Clear Fault')
             # download(device,idx,0x6040,0,value=0x0080,message='Clear Fault')
             download(device,idx,0x60FF,0,value=0,message='Target velocity set 0') 
@@ -175,7 +181,7 @@ def changeTo_OP_Enable(device,idx):
         # result = upload(device,idx,0x6041,0,'H',message='Check state2')  
         # print(getnbit(result,0,4))
         if getnbit(result,0,4) == 7:
-#            print(f'Device {idx} Is Enable')
+            print(f'Device {idx} Is Enable')
             return 
         val = getnbit(result,0,7) 
         # print(f'{val:06b}')    
@@ -197,6 +203,79 @@ def changeTo_OP_Enable(device,idx):
             download(device,idx,0x60FF,0,value=0,message='Target velocity set 0')  
             download(device,idx,0x6040,0,value=0x000f,message='Set Enable operation')
             # sleep(0.05)    
+# --------------------------------
+# def changeTo_OP_Enable2(device,idx):
+#     data= struct.unpack('iiH',master.slaves[idx].input)
+#     result = data[2]
+#     # if getnbit(result,0,4) == 7:
+#     #     print(f'Device {idx} Is Enable')
+#     #     return
+
+#     # download(device,idx,0x6040,0,value=0x0080,message='Clear Fault')
+    
+#     # while result is not Switch on disabled: wait
+#     check =True
+#     while check:
+        
+#         errorcode = upload(device,idx,0x603f,0,'H',message='Error Code')
+#         if  errorcode > 0:
+#             device_VelocityConfig(device,idx)
+#             # small_device_VelocityConfig(device,idx)
+            
+#             download(device,idx,0x6040,0,value=0x0080,message='Clear Fault')
+#             # download(device,idx,0x6040,0,value=0x0080,message='Clear Fault')
+#             download(device,idx,0x60FF,0,value=0,message='Target velocity set 0') 
+#             pos = data[0]
+#             download(device,idx,0x607A,0,value=pos,message='Change The target position')
+
+#             # master.send_processdata()
+#             # master.receive_processdata(2000)
+#             # changeTo_OP_Ethercat(device) 
+
+#         data= struct.unpack('iiH',master.slaves[idx].input)
+#         result = data[2] 
+#         if getnbit(result,0,4) == 0b1000: 
+#             download(device,idx,0x6040,0,value=0x0080,message='Clear Fault')
+#             # download(device,idx,0x60FF,0,value=0,message='Target velocity set 0') 
+
+#             # sleep(0.05)
+#             # master.send_processdata()
+#             # master.receive_processdata(2000)        
+#             # sleep(0.05)
+#             # data= struct.unpack('iiH',master.slaves[idx].input)
+#             # result = data[2]
+
+#         # result = upload(device,idx,0x6041,0,'H',message='Check state2')  
+#         # print(getnbit(result,0,4))
+#         if getnbit(result,0,4) == 7:
+#             # print(f'Device {idx} Is Enable')
+#             return 
+#         val = getnbit(result,0,7) 
+#         # print(f'{val:06b}')    
+#         if (val == 0b0010000) or (val == 0b0110000):            
+#             continue
+         
+#         if (val == 0b1010000) or (val == 0b1000000):
+#         #    download(device,idx,0x60FF,0,value=0,message='Target velocity set 0')  
+#            download(device,idx,0x6040,0,value=0x0006,message='Set ready to switch on')
+#         #    sleep(0.05)
+
+     
+#         if (val == 0b0110001) or (val == 0b0100001): 
+#             # download(device,idx,0x60FF,0,value=0,message='Target velocity set 0')  
+#             download(device,idx,0x6040,0,value=0x0007,message='Set switch on')
+#             # sleep(0.05)        
+        
+#         if (val == 0b0110011) or (val == 0b0100011):
+#             # download(device,idx,0x60FF,0,value=0,message='Target velocity set 0')  
+#             download(device,idx,0x6040,0,value=0x000f,message='Set Enable operation')
+#             # sleep(0.05)    
+#         # master.send_processdata()
+#         # master.receive_processdata(2000)  
+
+
+#     # result = upload(device,idx,0x6041,0,'H')
+#     # print(f'\t New State: {hex(device.state)} => {device.state:08b}')
 # ----------------------------------
 def changeTo_OP_Master(master):
     """ Change Master state to Operation state
@@ -270,7 +349,7 @@ def device_VelocityConfig(device,idx):
     download(device,idx,0x6080,0,value=145927,message='Set: Max speed')    # 145927 
     download(device,idx,0x6081,0,value=60000,message='Set: Profile velocity') # 45000
     # download(device,idx,0x60FF,0,value=10,message='Set: target velocity')
-
+    
 
     # download(device,idx,0x60C5,0,value=1400,message='Set: Max acceleration') #   486423          
     # download(device,idx,0x60C6,0,value=2800,message='Set: Max deceleration')  # 486423
@@ -282,40 +361,9 @@ def device_VelocityConfig(device,idx):
     download(device,idx,0x6066,0,value=10000,message='Set: pos following window timeout')
     
     # download(device,idx,0x6068,0,value=10,message='Set: Position window time')
-    download(device,idx,0x3b60,0,value=100000,message='Set: Maximum ')
+    download(device,idx,0x3b60,0,value=60000,message='Set: Maximum ')
 
-# ----------------------------------
-def small_device_VelocityConfig(device,idx):
-    """ Config Velocity and etc.
-
-    Parameters
-    ----------
-        device: Master.slave
-            Joint
-        idx: int 
-    """  
-    download(device,idx,0x607F,0,value=262144,message='Set: Max profile velocity')#  145927 
-    download(device,idx,0x6080,0,value=262144,message='Set: Max speed')    # 145927 
-    download(device,idx,0x6081,0,value=60000,message='Set: Profile velocity') # 45000
-    # download(device,idx,0x60FF,0,value=10,message='Set: target velocity')
-
-
-    # download(device,idx,0x60C5,0,value=1400,message='Set: Max acceleration') #   486423          
-    # download(device,idx,0x60C6,0,value=2800,message='Set: Max deceleration')  # 486423
-    
-    # download(device,idx,0x6083,0,value=1400,message='Set: Profile acceleration') # 291854
-    # download(device,idx,0x6084,0,value=2800,message='Set: Profile deceleration') # 291854
-
-    download(device,idx,0x6065,0,value=100000,message='Set: pos following window ')
-    download(device,idx,0x6066,0,value=10000,message='Set: pos following window timeout')
-    
-    # download(device,idx,0x6068,0,value=10,message='Set: Position window time')
-    download(device,idx,0x3b60,0,value=100000,message='Set: Maximum ')
-
-
-
-
-
+# ---------------------------------- 
 def mainapp():
     try:
         number_of_slaves =master.config_init()
@@ -706,17 +754,17 @@ class ErobNode(Node):
             target[i] = caltargetposition(data[0],joints.position[i]) 
 
             if target[i] < data[0]:
-                step[i]=-100
+                step[i]=-200
                 maxstep[i]=(int(joints.velocity[i]) * -1)
-                incstep[i]=-100
+                incstep[i]=-20
             else:
-                step[i]= 100
+                step[i]= 200
                 maxstep[i]=int(joints.velocity[i]) 
-                incstep[i]=100
+                incstep[i]=20
 
             if abs(  data[0] - target[i]) < (int(joints.velocity[i]) ):
                 step[i] = 0
-        #print(target)
+        print(target)
         print(step)
     
     def check_run(self):
@@ -772,7 +820,7 @@ class RunNode(Node):
         self.freerun=20
 
         timer_period = 0.01
-        self.refreshtime=timer_period * 10
+        self.refreshtime=timer_period * 100
         self.basestep=400
 
         self.timer2 = self.create_timer(timer_period, self.free_run)
@@ -781,17 +829,17 @@ class RunNode(Node):
         # print(target)
 
     def free_run(self):
-        """ Infinity loop for change position
+        """ infinity loop for change position
 
         use list of step and list of target (Global values) to move the Arm
         """       
         self.count+=1
         master.receive_processdata(self.refreshtime)
-        #sleep(0.01)
+        # sleep(0.01)
         for n in range(number_of_slaves):
             data[n]= struct.unpack('iiH',master.slaves[n].input)
            
-            if abs(data[n][0] - target[n]) < self.basestep:
+            if abs(data[n][0] - target[n]) < (self.basestep):
                 step[n]=0
 
             # if (abs(data[n][0] - target[n])/1450) < (self.basestep):
@@ -823,27 +871,19 @@ class RunNode(Node):
         # print(data)
                     
         master.send_processdata()
-        
+
         for k in range(number_of_slaves):
             if step[k] != 0:
                 # data[k]= struct.unpack('iiH',master.slaves[k].input)
                 
-                if  abs(data[k][0] - target[k]) < 2500:   # ~2 degree
-                    step[k] = step[k] - (incstep[k]*2)                    
-                    if abs(step[k])<200:
-                        step[k]=incstep[k]
-                        maxstep[k] = 0
-                    #print(step)
+                if  abs(data[k][0] - target[k]) < 1400  and step[k]>200:
+                    step[k] = step[k] - (incstep[k]*5)
+                    maxstep[k] = 0
                 else:
                     if abs(step[k]) < abs(maxstep[k]):
                         step[k] = step[k] + incstep[k]
-                        #print(step)
-                    else:
-                        step[k] = maxstep[k]
-          
-                
             
-        #print(step)
+        # print(step)
         
         # if self.count % 2 == 1: 
         #     for g in range(number_of_slaves):             

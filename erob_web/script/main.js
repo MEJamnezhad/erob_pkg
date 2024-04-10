@@ -6,7 +6,7 @@ const app = Vue.createApp({
             // ros connection
             ros: null,
             config: true,
-            rosbridge_address: 'ws://192.168.1.70:9090/',
+            rosbridge_address: 'ws://192.168.1.69:9090/',
             connected: false,
             error: false,
             actuatorDone: true,
@@ -385,7 +385,7 @@ const app = Vue.createApp({
         // },
 
         Operate: async function (data) {
-            console.log(data)
+            // console.log(data)
             localStorage.setItem("RUN", JSON.stringify(data));
             localStorage.setItem("ite", 0);
             this.DO();
@@ -401,7 +401,7 @@ const app = Vue.createApp({
                 return
             };
 
-            console.log(command[pos])
+            // console.log(command[pos])
             while (command[pos].type == "Arm") {
                 // if (this.ArmRunning == false) {
                 this.sendWithTarget(command[pos].value)
@@ -645,27 +645,25 @@ const app = Vue.createApp({
                 messageType: "sensor_msgs/msg/JointState",
             });
 
+           
 
-            rj1 = (this.j1 * Math.PI) / 180;
-            rj2 = (this.j2 * Math.PI) / 180;
-            rj3 = (this.j3 * Math.PI) / 180;
-            rj4 = (this.j4 * Math.PI) / 180;
-            rj5 = (this.j5 * Math.PI) / 180;
-            rj6 = (this.j6 * Math.PI) / 180;
+            // rj1 = (this.j1 * Math.PI) / 180;
+            // rj2 = (this.j2 * Math.PI) / 180;
+            // rj3 = (this.j3 * Math.PI) / 180;
+            // rj4 = (this.j4 * Math.PI) / 180;
+            // rj5 = (this.j5 * Math.PI) / 180;
+            // rj6 = (this.j6 * Math.PI) / 180;
 
-            // rj1 = (parseFloat(j1) * Math.PI) / 180;
-            // rj2 = (parseFloat(j2) * Math.PI) / 180;
-            // rj3 = (parseFloat(j3) * Math.PI) / 180;
-            // rj4 = (parseFloat(j4) * Math.PI) / 180;
-            // rj5 = (parseFloat(j5) * Math.PI) / 180;
-            // rj6 = (parseFloat(j6) * Math.PI) / 180;
-            let newspeed = this.speed * 3;
+            let newspeed = this.speed * 12;
+            let newspeed2 = this.speed * 10;
             var JointState = new ROSLIB.Message({
                 name: ["j1", "j2", "j3", "j4", "j5", "j6"],
-                position: [rj1, rj2, rj3, rj4, rj5, rj6],
-                velocity: [newspeed, newspeed, newspeed, newspeed, newspeed, newspeed],
+                // position: [rj1, rj2, rj3, rj4, rj5, rj6],
+                position: [parseInt(this.j1), parseInt(this.j2), parseInt(this.j3), parseInt(this.j4), parseInt(this.j5), parseInt(this.j6)],
+                velocity: [newspeed2, newspeed2, newspeed2, newspeed, newspeed, newspeed],
                 effort: [],
             });
+            console.log(JointState)
             cmdVel.publish(JointState);
 
             this.addItem()
@@ -679,22 +677,30 @@ const app = Vue.createApp({
             });
 
 
-            rj1 = (target.joint1 * Math.PI) / 180;
-            rj2 = (target.joint2 * Math.PI) / 180;
-            rj3 = (target.joint3 * Math.PI) / 180;
-            rj4 = (target.joint4 * Math.PI) / 180;
-            rj5 = (target.joint5 * Math.PI) / 180;
-            rj6 = (target.joint6 * Math.PI) / 180;
+            // rj1 = (target.joint1 * 1) / 1;
+            // rj2 = (target.joint2 * 1) / 1;
+            // rj3 = (target.joint3 * Math.PI) / 180;
+            // rj4 = (target.joint4 * Math.PI) / 180;
+            // rj5 = (target.joint5 * Math.PI) / 180;
+            // rj6 = (target.joint6 * Math.PI) / 180;
+            rj1 = target.joint1 * 1;
+            rj2 = target.joint2 * 1;
+            rj3 = target.joint3 * 1;
+            rj4 = target.joint4 * 1;
+            rj5 = target.joint5 * 1;
+            rj6 = target.joint6 * 1;
 
-            let newspeed = this.speed * 3;
+            let newspeed = this.speed * 12;
+            let newspeed2 = this.speed * 10;
             var JointState = new ROSLIB.Message({
                 name: ["j1", "j2", "j3", "j4", "j5", "j6"],
                 position: [rj1, rj2, rj3, rj4, rj5, rj6],
-                velocity: [newspeed, newspeed, newspeed, newspeed, newspeed, newspeed],
+                // position: [target.joint1,target.joint2, target.joint3, target.joint4, target.joint5, target.joint6],
+                velocity: [newspeed2, newspeed2, newspeed2, newspeed, newspeed, newspeed],
                 effort: [],
             });
             cmdVel.publish(JointState);
-
+            console.log(JointState)
             // this.addItem()
 
         },
@@ -713,13 +719,17 @@ const app = Vue.createApp({
             }, 500);
 
         },
+
+
         getKey(evt) {
             this.keyValue = evt.key
             console.log(evt.key)
             // this.speed = 25
+            this.speed=10
             switch (this.keyValue) {
                 case 'z':
                     this.j1--;
+                    
                     this.send()
                     break;
                 case 'x':
@@ -875,7 +885,7 @@ const app = Vue.createApp({
     mounted() {
         // page is ready
         console.log('page is ready!');
-        //Hand Menu
+        // Hand Menu
         this.actionList = actuators;
         this.showData()
     },
