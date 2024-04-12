@@ -187,20 +187,7 @@ const app = Vue.createApp({
         },
         docycle: async function () {
             this.store = JSON.parse(localStorage.getItem(this.catTitle));
-            // for (pos in this.store) {
-            //     console.log(this.store[pos].value)
-            //     this.sendWithTarget(this.store[pos].value)
-
-            //     console.log(this.store[pos].value.delay)
-            //     console.log(this.store[pos].value.title)
-
-            //     while (!this.reach(this.store[pos].value)) {
-            //         await this.sleep(100)
-            //         // await console.log('wait')
-
-            //     }
-            //     await this.sleep(this.store[pos].value.delay - 1 * 1000);
-            // }
+            
             let data = this.store;
             this.Operate(data)
         },
@@ -210,53 +197,7 @@ const app = Vue.createApp({
             let run = []
             for (item in this.catList) {
                 let data = JSON.parse(localStorage.getItem(this.catList[item].name));
-                // console.log(data)
-                // for (pos in data) {
-                //     // console.log(pos)
-                //     // console.log(data[pos])
-                //     switch (data[pos].type) {
-                //         case "Arm":
-                //             console.log(data[pos].value.delay)
-                //             this.sendWithTarget(data[pos].value)
-                //             while (!this.reach(data[pos].value)) {
-                //                 await this.sleep(100)
-                //                 console.log('wait')
-                //             }
-                //             await this.sleep(data[pos].value.delay - 1 * 1000);
-                //             break;
-                //         case "LED":
-                //             let LEDaction = {
-                //                 "action": data[pos].value.reapet,
-                //                 "actionCmd": "/led/command"
-                //             }
-                //             this.ActuatorCommand(LEDaction)
-                //             break;
-                //         case "Buzzer":
-                //             let Buzzeraction = {
-                //                 "action": data[pos].value.reapet,
-                //                 "actionCmd": "/buzzer/command"
-                //             }
-                //             this.ActuatorCommand(Buzzeraction)
-                //             break;
-                //         case "Hand":
-                //             this.ActuatorCommand(data[pos].value)
-                //             break;
-                //     }
-                //     // if (data[pos].type == "Arm") {
-                //     //     console.log(data[pos].value.delay)
-                //     //     this.sendWithTarget(data[pos].value)
-                //     //     console.log(data[pos].value)
-                //     //     while (!this.reach(data[pos].value)) {
-                //     //         await this.sleep(100)
-                //     //         console.log('wait')
-                //     //     }
-                //     //     await this.sleep(data[pos].value.delay - 1 * 1000);
-                //     // }
-                //     // else {
-                //     //     console.log(data[pos].type)
-                //     // }
-
-                // }
+                
                 for (pos in data) {
                     run.push(data[pos])
                 }
@@ -266,124 +207,7 @@ const app = Vue.createApp({
 
         },
 
-        // Operate: async function (data) {
-        //     let sleepTime = 500
-        //     // for (pos in data) {
-        //     let pos = 0;
-        //     while (pos < data.length) {
-        //         // console.log(pos)
-        //         // console.log(data[pos].type)
-
-        //         if (data[pos].type == "Arm") {
-        //             // console.log(data[pos].value.delay)
-        //             this.sendWithTarget(data[pos].value)
-        //             // while (!this.reach(data[pos].value)) {
-        //             //     await this.sleep(100)
-        //             //     console.log('wait')
-        //             // }
-        //             // await this.sleep(data[pos].value.delay - 1 * 1000);
-        //             // this.serial_msg = "working"
-
-        //             console.log(data[pos])
-
-        //             /////// wait
-        //             pos++;
-
-        //         }
-
-        //         else {
-
-        //             // await this.sleep(500);
-        //             if (this.actuatorDone == true && this.serial_msg == "done") {
-        //                 // let msg = "";
-        //                 // this.sleep(1000)
-
-        //                 if (data[pos].type == "LED") {
-        //                     let LEDaction = {
-        //                         "action": data[pos].value.reapet,
-        //                         "actionCmd": "/led/command"
-        //                     }
-        //                     this.serial_msg = "led"
-        //                     // msg = "led"
-        //                     this.ActuatorCommand(LEDaction)
-        //                     // this.ActuatorState(msg)
-        //                     // while (!this.ActuatorState("led")) {
-        //                     //     await this.sleep(200)
-        //                     //     console.log("wait LED")
-        //                     // }
-
-
-        //                 }
-
-        //                 else if (data[pos].type == "Buzzer") {
-        //                     let Buzzeraction = {
-        //                         "action": data[pos].value.reapet,
-        //                         "actionCmd": "/buzzer/command"
-        //                     }
-        //                     this.serial_msg = "buz"
-        //                     // msg = "buz"
-        //                     this.ActuatorCommand(Buzzeraction)
-        //                     // this.ActuatorState(msg)
-        //                     // while (!this.ActuatorState("buz")) {
-        //                     //     await this.sleep(200)
-        //                     //     console.log("wait BUZZER")
-        //                     // }
-
-        //                 }
-
-        //                 else if (data[pos].type == "Hand") {
-        //                     let handaction = {
-        //                         "action": data[pos].value.action,
-        //                         "actionCmd": "/hand/command"
-        //                     }
-        //                     let msg = ""
-        //                     if (data[pos].value.action == "pickup") {
-        //                         this.serial_msg = "up"
-        //                         msg = "up";
-        //                     }
-        //                     else {
-        //                         this.serial_msg = "off"
-        //                         msg = "off";
-        //                     }
-        //                     this.ActuatorCommand(handaction);
-        //                     // this.ActuatorState(msg);
-        //                     // while (true) {
-        //                     //     let dd = this.ActuatorState(msg)
-        //                     //     console.log(dd)
-        //                     //     await this.sleep(500)
-        //                     //     console.log("wait HAND")
-        //                     // }
-        //                     console.log("exit")
-
-        //                 }
-
-        //                 // console.log(msg)
-        //                 // console.log(this.serial_msg)
-        //                 // console.log(this.actuatorDone)
-
-        //                 // while (this.serial_msg != "working") {
-        //                 pos++;
-        //                 // await this.sleep(1000)
-        //                 console.log("Next---------------------")
-        //             }
-
-        //             // while (!this.ActuatorState(msg)) {
-        //             //     await this.sleep(1000)
-        //             //     // console.log(this.serial_msg)
-        //             //     if (this.actuatorDone == true) {
-        //             //         console.log(x)
-        //             //         x++;
-        //             //     }
-        //             // }
-
-        //         }
-
-        //     }
-
-        //     console.log("Dddddddddddddddddddddddddddddddddddddd")
-
-        // },
-
+      
         Operate: async function (data) {
             // console.log(data)
             localStorage.setItem("RUN", JSON.stringify(data));
@@ -401,17 +225,17 @@ const app = Vue.createApp({
                 return
             };
 
-            // console.log(command[pos])
+            console.log(command[pos])
             while (command[pos].type == "Arm") {
                 // if (this.ArmRunning == false) {
                 this.sendWithTarget(command[pos].value)
                 while (!this.reach(command[pos])) {
-                    await this.sleep(100)
+                    await this.sleep(500)
                     console.log('wait')
                 }
 
                 // while (this.ArmRunning == true) {
-                //     await this.sleep(100)
+                //     await this.sleep(500)
                 //     console.log('wait')
                 // }
 
@@ -494,12 +318,12 @@ const app = Vue.createApp({
                 // console.log(message.data)
                 if (message.data == "1") {
                     this.ArmRunning = true
-                    // console.log(message)
                 }
                 else {
                     this.ArmRunning = false;
-
+                    
                 }
+                // console.log(message)
                 // this.actuatorDone=  message.data.includes(this.serial_msg)
                 // console.log(this.actuatorDone)
             });
@@ -570,7 +394,8 @@ const app = Vue.createApp({
 
         reach: function (target) {
             // console.log(Math.round(this.cposition.Joint1))
-            // console.log(target.joint1)
+            // console.log(target.value)
+            // console.log(this.cposition)
 
             if (Math.round(this.cposition.Joint1) != target.value.joint1)
                 return false;
@@ -584,6 +409,7 @@ const app = Vue.createApp({
                 return false;
             if (Math.round(this.cposition.Joint6) != target.value.joint6)
                 return false;
+            
             return true;
         },
         sleep: function (milliseconds) {
@@ -615,13 +441,14 @@ const app = Vue.createApp({
                 // console.log(poses[0]);
                 let txt = "";
                 let i = 0;
-                for (let x in poses) {
-                    p = ((poses[x] * 180) / Math.PI) % 360;
-                    if (p > 180) {
-                        p = p - 360;
-                    }
-                    poses[x] = p;
-                }
+                // for (let x in poses) {
+                //     // p = ((poses[x] * 180) / Math.PI) % 360;
+                //     p =poses[x]
+                //     if (p > 180) {
+                //         p = p - 360;
+                //     }
+                //     poses[x] = p;
+                // }
 
                 listener.unsubscribe();
                 let item = {
@@ -654,12 +481,12 @@ const app = Vue.createApp({
             // rj5 = (this.j5 * Math.PI) / 180;
             // rj6 = (this.j6 * Math.PI) / 180;
 
-            let newspeed = this.speed * 12;
+            let newspeed = this.speed * 10;
             let newspeed2 = this.speed * 10;
             var JointState = new ROSLIB.Message({
                 name: ["j1", "j2", "j3", "j4", "j5", "j6"],
                 // position: [rj1, rj2, rj3, rj4, rj5, rj6],
-                position: [parseInt(this.j1), parseInt(this.j2), parseInt(this.j3), parseInt(this.j4), parseInt(this.j5), parseInt(this.j6)],
+                position: [this.j1, this.j2, this.j3, this.j4, this.j5, this.j6],
                 velocity: [newspeed2, newspeed2, newspeed2, newspeed, newspeed, newspeed],
                 effort: [],
             });
@@ -677,12 +504,6 @@ const app = Vue.createApp({
             });
 
 
-            // rj1 = (target.joint1 * 1) / 1;
-            // rj2 = (target.joint2 * 1) / 1;
-            // rj3 = (target.joint3 * Math.PI) / 180;
-            // rj4 = (target.joint4 * Math.PI) / 180;
-            // rj5 = (target.joint5 * Math.PI) / 180;
-            // rj6 = (target.joint6 * Math.PI) / 180;
             rj1 = target.joint1 * 1;
             rj2 = target.joint2 * 1;
             rj3 = target.joint3 * 1;
@@ -690,7 +511,7 @@ const app = Vue.createApp({
             rj5 = target.joint5 * 1;
             rj6 = target.joint6 * 1;
 
-            let newspeed = this.speed * 12;
+            let newspeed = this.speed * 10;
             let newspeed2 = this.speed * 10;
             var JointState = new ROSLIB.Message({
                 name: ["j1", "j2", "j3", "j4", "j5", "j6"],
@@ -700,7 +521,7 @@ const app = Vue.createApp({
                 effort: [],
             });
             cmdVel.publish(JointState);
-            console.log(JointState)
+            // console.log(JointState)
             // this.addItem()
 
         },
@@ -714,7 +535,7 @@ const app = Vue.createApp({
         todo: function () {
             this.intervalid1 = setInterval(() => {
                 this.showPosition();
-                this.ARMState();
+                // this.ARMState();
                 this.ActuatorState2();
             }, 500);
 
