@@ -8,7 +8,6 @@
     <title>ARO Robotic Systems </title>
     <link rel="stylesheet" href="style/bootstrap.min.css" />
     <script src="script/jquery.slim.min.js"></script>
-    <script src="script/jquery.js"></script>
     <script src="script/popper.min.js"></script>
     <script src="script/bootstrap.bundle.min.js"></script>
 
@@ -208,7 +207,8 @@
                                                         </svg>
                                                     </button>
                                                     <button class="btn btn-sm  btn-primary ml-2" v-on:keydown="getKey"
-                                                        title="Active Keyboard">
+                                                    data-toggle="modal"           data-target="#myModalkeyboardrun"    
+                                                    title="Active Keyboard">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                                             fill="currentColor" class="bi bi-keyboard"
                                                             viewBox="0 0 16 16">
@@ -602,7 +602,7 @@
                                                                 d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
                                                         </svg></button>
                                                     <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                                                    
+
                                                     <button onclick="UpButton(this,'storedata')"
                                                         class="btn btn-sm btn-info"><svg
                                                             xmlns="http://www.w3.org/2000/svg" width="16" height="16"
@@ -965,6 +965,257 @@
             </div>
         </div>
 
+        <div class="modal fade row" id="myModalkeyboardrun" >
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">Move</h4>
+                        <button type="button" class="close" data-dismiss="modal">×</button>
+                    </div>
+
+                    <!-- Modal body -->
+                    <div class="modal-body" v-on:keydown="getKey">
+                        <div class=" text-center" >
+         
+                            <div class="row text-center">
+                                <div class="col-md-4">
+                                    <button @click="j1--; send()" class="border no-border btn btn-warning">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                                            fill="currentColor" class="bi bi-arrow-counterclockwise"
+                                            viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd"
+                                                d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2z" />
+                                            <path
+                                                d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466" />
+                                        </svg>
+                                    </button>
+                                    <br>
+                                    <strong>Z</strong>
+                                    
+                                </div>
+
+                                <div class="col-md-4 mt-3">
+                                    <strong>Joint 1</strong>
+                                    <br>
+                                    <span>{{j1}} °</span>
+                                </div>
+                                <div class="col-md-4">
+                                    <button @click="j1++; send()" class="border no-border btn btn-danger"><svg
+                                            xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                                            fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd"
+                                                d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z" />
+                                            <path
+                                                d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466" />
+                                        </svg></button>
+                                        <br>
+                                    <strong>X</strong>
+                                </div>
+                            </div> 
+
+
+
+                         <hr>
+                            <div class="row text-center ">
+                                <div class="col-md-4">
+                                    <button @click="j2--; send()" class="border no-border btn btn-warning">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                                            fill="currentColor" class="bi bi-arrow-counterclockwise"
+                                            viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd"
+                                                d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2z" />
+                                            <path
+                                                d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466" />
+                                        </svg>
+                                    </button>
+                                    <br>
+                                    <strong>A</strong>
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                    <strong>Joint 2</strong>
+                                    <br>
+                                    <span>{{j2}} °</span>
+                                </div>
+                                <div class="col-md-4">
+                                    <button @click="j2++; send()" class="border no-border btn btn-danger"><svg
+                                            xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                                            fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd"
+                                                d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z" />
+                                            <path
+                                                d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466" />
+                                        </svg></button>
+                                        <br>
+                                        <strong>S</strong>
+                                </div>
+                            </div>
+
+
+
+                            <hr>
+                            <div class="row text-center ">
+                                <div class="col-md-4">
+                                    <button @click="j3--; send()" class="border no-border btn btn-warning">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                                            fill="currentColor" class="bi bi-arrow-counterclockwise"
+                                            viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd"
+                                                d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2z" />
+                                            <path
+                                                d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466" />
+                                        </svg>
+                                    </button>
+                                    <br>
+                                    <strong>Q</strong>
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                    <strong>Joint 3</strong>
+                                    <br>
+                                    <span>{{j3}} °</span>
+                                </div>
+                                <div class="col-md-4">
+                                    <button @click="j3++; send()" class="border no-border btn btn-danger"><svg
+                                            xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                                            fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd"
+                                                d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z" />
+                                            <path
+                                                d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466" />
+                                        </svg></button>
+                                        <br>
+                                        <strong>W</strong>
+                                </div>
+                            </div>
+
+
+                            <hr>
+                            <div class="row text-center">
+
+                                <div class="col-md-4">
+                                    <button @click="j4--; send()" class="border no-border btn btn-warning">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                                            fill="currentColor" class="bi bi-arrow-counterclockwise"
+                                            viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd"
+                                                d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2z" />
+                                            <path
+                                                d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466" />
+                                        </svg>
+                                    </button>
+                                    <br>
+                                    <strong>N</strong>
+                                </div>
+                                <div class="col-md-4 mt-2">
+                                    <strong>Joint 4</strong>
+                                    <br>
+                                    <span>{{j4}} °</span>
+                                </div>
+                                <div class="col-md-4">
+                                    <button @click="j4++; send()" class="border no-border btn btn-danger"><svg
+                                            xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                                            fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd"
+                                                d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z" />
+                                            <path
+                                                d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466" />
+                                        </svg></button>
+                                        <br>
+                                        <strong>M</strong>
+                                </div>
+                            </div>
+
+
+                            <hr>
+                            <div class="row text-center ">
+
+                                <div class="col-md-4">
+                                    <button @click="j5--; send()" class="border no-border btn btn-warning">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                                            fill="currentColor" class="bi bi-arrow-counterclockwise"
+                                            viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd"
+                                                d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2z" />
+                                            <path
+                                                d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466" />
+                                        </svg>
+                                    </button>
+                                    <br>
+                                    <strong>K</strong>
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                    <strong>Joint 5</strong>
+                                    <br>
+                                    <span>{{j5}} °</span>
+                                </div>
+                                <div class="col-md-4">
+                                    <button @click="j5++; send()" class="border no-border btn btn-danger"><svg
+                                            xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                                            fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd"
+                                                d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z" />
+                                            <path
+                                                d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466" />
+                                        </svg></button>
+                                        <br>
+                                        <strong>L</strong>
+                                </div>
+                            </div>
+
+
+                            <hr>
+                            <div class="row text-center ">
+
+                                <div class="col-md-4">
+                                    <button @click="j6--; send()" class="border no-border btn btn-warning">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                                            fill="currentColor" class="bi bi-arrow-counterclockwise"
+                                            viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd"
+                                                d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2z" />
+                                            <path
+                                                d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466" />
+                                        </svg>
+                                    </button>
+                                    <br>
+                                    <strong>O</strong>
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                    <strong>Joint 6</strong>
+                                    <br>
+                                    <span>{{j6}} °</span>
+                                </div>
+                                <div class="col-md-4">
+                                    <button @click="j6++; send()" class="border no-border btn btn-danger"><svg
+                                            xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                                            fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd"
+                                                d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z" />
+                                            <path
+                                                d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466" />
+                                        </svg></button>
+                                        <br>
+                                        <strong>P</strong>
+                                </div>
+                            </div> 
+
+
+                        </div>
+                    </div>
+
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+
+
     </div>
     <input type="file" id="file-input" hidden />
     <pre id="file-content" hidden></pre>
@@ -1052,9 +1303,9 @@
 
             let row_index = element.parentNode.parentNode.rowIndex
 
-            moveActiveRow(row_index,1,tablename)
-           
-           
+            moveActiveRow(row_index, 1, tablename)
+
+
             newdata = tableToJson(document.getElementById(tablename));
 
             let cattitle = document.getElementById('catTitle1').value;
@@ -1067,7 +1318,7 @@
         }
 
 
-        
+
         function UpButton(element, tablename) {
 
             let row_index = element.parentNode.parentNode.rowIndex
@@ -1075,7 +1326,7 @@
 
 
             if (row_index > 1)
-                moveActiveRow(row_index,-1,tablename)
+                moveActiveRow(row_index, -1, tablename)
             newdata = tableToJson(document.getElementById(tablename));
 
             let cattitle = document.getElementById('catTitle1').value;
@@ -1086,14 +1337,14 @@
 
         }
 
-        function moveActiveRow(activeRow,move,tablename) {
+        function moveActiveRow(activeRow, move, tablename) {
             var rows = document.getElementById(tablename).rows;
             console.log(rows)
             var oldRow = rows[activeRow].innerHTML;
-            var newRow = rows[activeRow+move].innerHTML;
+            var newRow = rows[activeRow + move].innerHTML;
             rows[activeRow].innerHTML = newRow;
-            rows[activeRow+move].innerHTML = oldRow;
-          }
+            rows[activeRow + move].innerHTML = oldRow;
+        }
 
 
 

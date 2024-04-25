@@ -84,6 +84,8 @@ const app = Vue.createApp({
 
         },
         showData: function () {
+
+            console.log('sssss')
             try {
                 this.catTitle = document.getElementById('catTitle1').value;
                 if (localStorage.getItem(this.catTitle) === null) {
@@ -96,7 +98,7 @@ const app = Vue.createApp({
                 }
             }
             catch (err) {
-
+                console.log('eeeeeeeeeeeee')
             }
 
 
@@ -176,6 +178,7 @@ const app = Vue.createApp({
 
 
         Delete: function (index) {
+           console.log(index)
             // this.store.splice(this.store.indexOf(index), 1);  
             this.store.splice(index, 1);
             localStorage.setItem(this.catTitle, JSON.stringify(this.store));
@@ -547,8 +550,8 @@ const app = Vue.createApp({
             console.log(evt.key)
             // this.speed = 25
             this.speed=10
-            switch (this.keyValue) {
-                case 'z':
+            switch (this.keyValue.toLowerCase()) {
+                case 'z' :
                     this.j1--;
                     
                     this.send()
@@ -610,6 +613,10 @@ const app = Vue.createApp({
 
             // this.speed = 100
         },
+
+
+
+
 
         addPosition: function () {
 
