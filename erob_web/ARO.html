@@ -207,8 +207,8 @@
                                                         </svg>
                                                     </button>
                                                     <button class="btn btn-sm  btn-primary ml-2" v-on:keydown="getKey"
-                                                    data-toggle="modal"           data-target="#myModalkeyboardrun"    
-                                                    title="Active Keyboard">
+                                                        data-toggle="modal" data-target="#myModalkeyboardrun"
+                                                        title="Active Keyboard">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                                             fill="currentColor" class="bi bi-keyboard"
                                                             viewBox="0 0 16 16">
@@ -593,7 +593,9 @@
 
                                                 </td>
                                                 <td>
-                                                    <button @click="Delete(index)" class="btn btn-sm btn-danger"><svg
+                                                    <button @click="Delete(index)"
+                                                        onclick="deleteActiveRow(this,'storedata')"
+                                                        class="btn btn-sm btn-danger"><svg
                                                             xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                             fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                                                             <path
@@ -965,7 +967,7 @@
             </div>
         </div>
 
-        <div class="modal fade row" id="myModalkeyboardrun" >
+        <div class="modal fade row" id="myModalkeyboardrun">
             <div class="modal-dialog modal-md">
                 <div class="modal-content">
 
@@ -977,8 +979,8 @@
 
                     <!-- Modal body -->
                     <div class="modal-body" v-on:keydown="getKey">
-                        <div class=" text-center" >
-         
+                        <div class=" text-center">
+
                             <div class="row text-center">
                                 <div class="col-md-4">
                                     <button @click="j1--; send()" class="border no-border btn btn-warning">
@@ -993,7 +995,7 @@
                                     </button>
                                     <br>
                                     <strong>Z</strong>
-                                    
+
                                 </div>
 
                                 <div class="col-md-4 mt-3">
@@ -1010,14 +1012,14 @@
                                             <path
                                                 d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466" />
                                         </svg></button>
-                                        <br>
+                                    <br>
                                     <strong>X</strong>
                                 </div>
-                            </div> 
+                            </div>
 
 
 
-                         <hr>
+                            <hr>
                             <div class="row text-center ">
                                 <div class="col-md-4">
                                     <button @click="j2--; send()" class="border no-border btn btn-warning">
@@ -1047,8 +1049,8 @@
                                             <path
                                                 d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466" />
                                         </svg></button>
-                                        <br>
-                                        <strong>S</strong>
+                                    <br>
+                                    <strong>S</strong>
                                 </div>
                             </div>
 
@@ -1084,8 +1086,8 @@
                                             <path
                                                 d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466" />
                                         </svg></button>
-                                        <br>
-                                        <strong>W</strong>
+                                    <br>
+                                    <strong>W</strong>
                                 </div>
                             </div>
 
@@ -1121,8 +1123,8 @@
                                             <path
                                                 d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466" />
                                         </svg></button>
-                                        <br>
-                                        <strong>M</strong>
+                                    <br>
+                                    <strong>M</strong>
                                 </div>
                             </div>
 
@@ -1158,8 +1160,8 @@
                                             <path
                                                 d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466" />
                                         </svg></button>
-                                        <br>
-                                        <strong>L</strong>
+                                    <br>
+                                    <strong>L</strong>
                                 </div>
                             </div>
 
@@ -1195,10 +1197,10 @@
                                             <path
                                                 d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466" />
                                         </svg></button>
-                                        <br>
-                                        <strong>P</strong>
+                                    <br>
+                                    <strong>P</strong>
                                 </div>
-                            </div> 
+                            </div>
 
 
                         </div>
@@ -1275,7 +1277,7 @@
 
             if (children_index != row_index) {
                 // console.log(children_index);
-                // console.log(row_index);
+                console.log(row);
 
 
                 newdata = tableToJson(document.getElementById(tablename));
@@ -1339,11 +1341,28 @@
 
         function moveActiveRow(activeRow, move, tablename) {
             var rows = document.getElementById(tablename).rows;
-            console.log(rows)
+            console.log(rows[activeRow])
             var oldRow = rows[activeRow].innerHTML;
             var newRow = rows[activeRow + move].innerHTML;
             rows[activeRow].innerHTML = newRow;
             rows[activeRow + move].innerHTML = oldRow;
+        }
+
+        function deleteActiveRow(element, tablename) {
+
+            let row_index = element.parentNode.parentNode.rowIndex
+
+
+
+            if (row_index > 0)
+                var rows = document.getElementById(tablename).deleteRow(row_index);;
+
+            newdata = tableToJson(document.getElementById(tablename));
+
+            let cattitle = document.getElementById('catTitle1').value;
+            //console.log(cattitle)
+            localStorage.setItem(cattitle, JSON.stringify(newdata));
+
         }
 
 
