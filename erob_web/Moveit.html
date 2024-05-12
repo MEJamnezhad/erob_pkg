@@ -13,6 +13,9 @@
     <script src="script/bootstrap.bundle.min.js"></script>
 
     <link rel="icon" href="icon.png" type="image/x-icon" />
+
+    <!-- <link rel='manifest' href='/manifest.json?v=2'> -->
+
     <!-- <link rel="stylesheet" href="bootstrap-icons.min.css"> -->
     <style>
         .slider {
@@ -91,18 +94,18 @@
 </head>
 
 <body>
-    <div id="app" class="container mt-4">
+    <div id="app" class="container mt-4 p-0 mb-4">
         <div class="row">
             <div class="col-md-3 ">
                 <div class="card">
                     <div class="card-header">
-
+                        <img src="icon.png" class="Icon32">
                         <b>ARO Robotic Systems</b>
                     </div>
                     <div class="card-body">
-
-                        <h5>ROSBridge & Vue Js</h5>
-                        <label>ROSBridge address</label>
+                        <!-- <h5>ROSBridge & Vue Js</h5> -->
+                        <!-- <label>ROSBridge Address</label> -->
+                        <label>Web Socket Address</label>
                         <br />
                         <input type="text" v-model="rosbridge_address" class="form-control"
                             value="ws://127.0.0.1:9090/" />
@@ -112,7 +115,7 @@
                         <button class="mt-2 btn btn-primary" v-else @click="connect">Connect!</button>
                         <div class="font-weight-light mt-1">
                             <div style="color: #ff0000;" v-show="error">Error in the backend!</div>
-                            <div v-show="!connected">Connection closed.</div>
+                            <div v-show="!connected" class="text text-danger">Connection closed.</div>
                         </div>
                     </div>
                 </div>
@@ -133,7 +136,13 @@
                     <div class="card-body">
                         <!-- <span id="publisher"></span> -->
                         <ul>
-                            <li v-for="(x,index) in cposition">{{index}}: {{x.toFixed(2)}} </li>
+                            <li v-for="(x,index) in cposition">{{index}}: {{x.toFixed(2)}} °</li>
+                        </ul>
+                        <!-- {{cposition}} -->
+
+                        <hr>
+                        <ul>
+                            <li v-for="(x,index) in cpositionxyz">Axis {{index.toUpperCase()}}: {{x.toFixed(2)}} m </li>
                         </ul>
                     </div>
 
@@ -195,19 +204,24 @@
                                             <div class="row">
 
                                                 <div class="col-md-6 col-sm-8">
-                                                    <b>Set Position <sup>(Degree)</sup> </b>
+                                                    <b>Set Position <sup>(Degree & Meter)</sup> </b>
                                                 </div>
                                                 <div class="col-md-6 col-sm-8 text-right">
 
                                                     <button @click="currentPosition"
-                                                        class="btn btn-sm   btn-success ml-2 Icon40 resetIcon">
+                                                        class="btn btn-sm   btn-success Icon40 resetIcon">
                                                     </button>
-                                                    <button class="btn btn-sm  btn-primary ml-2 Icon40 keyboardIcon"
+                                                    <button class="btn btn-sm  btn-primary ml-3 Icon40 keyboardIcon"
                                                         v-on:keydown="getKey" data-toggle="modal"
-                                                        data-target="#myModalkeyboardrun" title="Active Keyboard">
+                                                        data-target="#myModalkeyboardrun" title="Active Keyboard"
+                                                        @click="Jogging_Command(0)">
                                                     </button>
-
-                                                    <button class="btn btn-sm  btn-info ml-2 Icon40 helpIcon"
+                                                    <button class="btn btn-sm  btn-danger ml-3 Icon40 joystickIcon"
+                                                        v-on:keydown="getKey" data-toggle="modal"
+                                                        data-target="#myModalkeyboardrun2" title="Active Keyboard"
+                                                        @click="Jogging_Command(1)">
+                                                    </button>
+                                                    <button class="btn btn-sm  btn-info ml-3 Icon40 helpIcon"
                                                         data-toggle="modal" data-target="#myModalkeyboard">
 
 
@@ -219,108 +233,180 @@
                                             </div>
                                         </div>
                                         <div class="card card-body">
-                                            <div class="input-group mb-2">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text" id="basic-addon1">Joint 1:</span>
-                                                </div>
-                                                <input class="col-md-2 form-control" v-model="j1" max="180" min="-180"
-                                                    type="number" step="0.01" />
-                                                <div class="col-md-8">
-                                                    <input type="range" min="-180" v-model="j1" max="180"
-                                                        class="slider mt-2" />
+
+
+                                            <ul class="nav nav-tabs" role="tablist">
+                                                <li class="nav-item">
+                                                    <a class="nav-link font-weight-bold text-darku active"
+                                                        @click="catresian=false" data-toggle="tab"
+                                                        href="#angle">Angle</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a class="nav-link font-weight-bold text-dark"
+                                                        @click="catresian=true" data-toggle="tab"
+                                                        href="#cartesian">Cartesian Coordinates</a>
+                                                </li>
+
+                                            </ul>
+
+                                            <div class="container ">
+
+
+                                                <div class="tab-content">
+                                                    <div id="angle" class="container tab-pane active"><br>
+                                                        <!-- <h3>Angles</h3> -->
+
+                                                        <div class="row">
+                                                            <div class="input-group mb-2">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text"
+                                                                        id="basic-addon1">Joint
+                                                                        1:</span>
+                                                                </div>
+                                                                <input class="col-md-2 form-control" v-model="j1"
+                                                                    max="180" min="-180" type="number" />
+                                                                <div class="col-md-8">
+                                                                    <input type="range" min="-180" v-model="j1"
+                                                                        max="180" class="slider mt-2" />
+                                                                </div>
+                                                            </div>
+
+
+                                                            <div class="input-group mb-2">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text"
+                                                                        id="basic-addon1">Joint
+                                                                        2:</span>
+                                                                </div>
+                                                                <input class="col-md-2 form-control" v-model="j2"
+                                                                    max="180" min="-180" type="number" />
+                                                                <div class="col-md-8">
+                                                                    <input type="range" min="-180" v-model="j2"
+                                                                        max="180" value="0" class="slider mt-2" />
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="input-group mb-2">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text"
+                                                                        id="basic-addon1">Joint
+                                                                        3:</span>
+                                                                </div>
+                                                                <input class="col-md-2 form-control" v-model="j3"
+                                                                    max="180" min="-180" type="number" />
+                                                                <div class="col-md-8">
+                                                                    <input type="range" min="-180" v-model="j3"
+                                                                        max="180" value="0" class="slider mt-2" />
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="input-group mb-2">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text"
+                                                                        id="basic-addon1">Joint
+                                                                        4:</span>
+                                                                </div>
+                                                                <input class="col-md-2 form-control" v-model="j4"
+                                                                    max="180" min="-180" type="number" />
+                                                                <div class="col-md-8">
+                                                                    <input type="range" min="-180" v-model="j4"
+                                                                        max="180" value="0" class="slider mt-2" />
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="input-group mb-2">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text"
+                                                                        id="basic-addon1">Joint
+                                                                        5:</span>
+                                                                </div>
+                                                                <input class="col-md-2 form-control" v-model="j5"
+                                                                    max="180" min="-180" type="number" />
+                                                                <div class="col-md-8">
+                                                                    <input type="range" min="-180" v-model="j5"
+                                                                        max="180" value="0" class="slider mt-2" />
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="input-group mb-2">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text"
+                                                                        id="basic-addon1">Joint
+                                                                        6:</span>
+                                                                </div>
+                                                                <input class="col-md-2 form-control" v-model="j6"
+                                                                    max="180" min="-180" type="number" />
+                                                                <div class="col-md-8">
+                                                                    <input type="range" min="-180" v-model="j6"
+                                                                        max="180" value="0" class="slider mt-2" />
+                                                                </div>
+                                                            </div>
+
+
+
+                                                        </div>
+                                                    </div>
+                                                    <div id="cartesian" class="container tab-pane fade"><br>
+                                                        <!-- <h3>Menu 1</h3> -->
+                                                        <div class="row text-left">
+                                                            <div class="input-group mb-2">
+                                                                <div class="input-group  ">
+                                                                    <div class="input-group-prepend">
+                                                                        <span class="input-group-text">Axis X:</span>
+                                                                    </div>
+                                                                    <input class="form-control mr-1" v-model="axisx"
+                                                                        value="0.0" type="number" step="0.01" />m
+
+                                                                </div>
+                                                            </div>
+                                                            <div class="input-group mb-2">
+                                                                <div class="input-group  ">
+                                                                    <div class="input-group-prepend">
+                                                                        <span class="input-group-text">Axis Y:</span>
+                                                                    </div>
+                                                                    <input class="form-control mr-1" v-model="axisy"
+                                                                        type="number" step="0.01" />m
+
+                                                                </div>
+                                                            </div>
+                                                            <div class="input-group">
+                                                                <div class="input-group  ">
+                                                                    <div class="input-group-prepend">
+                                                                        <span class="input-group-text">Axis Z:</span>
+                                                                    </div>
+                                                                    <input class="form-control mr-1" v-model="axisz"
+                                                                        type="number" step="0.01" />m
+
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+
                                                 </div>
                                             </div>
 
 
-                                            <div class="input-group mb-2">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text" id="basic-addon1">Joint 2:</span>
-                                                </div>
-                                                <input class="col-md-2 form-control" v-model="j2" max="180" min="-180"
-                                                    type="number" step="0.01" />
-                                                <div class="col-md-8">
-                                                    <input type="range" min="-180" v-model="j2" max="180" value="0"
-                                                        class="slider mt-2" />
-                                                </div>
-                                            </div>
 
-                                            <div class="input-group mb-2">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text" id="basic-addon1">Joint 3:</span>
-                                                </div>
-                                                <input class="col-md-2 form-control" v-model="j3" max="180" min="-180"
-                                                    type="number" step="0.01" />
-                                                <div class="col-md-8">
-                                                    <input type="range" min="-180" v-model="j3" max="180" value="0"
-                                                        class="slider mt-2" />
-                                                </div>
-                                            </div>
-
-                                            <div class="input-group mb-2">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text" id="basic-addon1">Joint 4:</span>
-                                                </div>
-                                                <input class="col-md-2 form-control" v-model="j4" max="180" min="-180"
-                                                    type="number" step="0.01" />
-                                                <div class="col-md-8">
-                                                    <input type="range" min="-180" v-model="j4" max="180" value="0"
-                                                        class="slider mt-2" />
-                                                </div>
-                                            </div>
-
-                                            <div class="input-group mb-2">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text" id="basic-addon1">Joint 5:</span>
-                                                </div>
-                                                <input class="col-md-2 form-control" v-model="j5" max="180" min="-180"
-                                                    type="number" step="0.01" />
-                                                <div class="col-md-8">
-                                                    <input type="range" min="-180" v-model="j5" max="180" value="0"
-                                                        class="slider mt-2" />
-                                                </div>
-                                            </div>
-
-                                            <div class="input-group mb-2">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text" id="basic-addon1">Joint 6:</span>
-                                                </div>
-                                                <input class="col-md-2 form-control" v-model="j6" max="180" min="-180"
-                                                    type="number" step="0.01" />
-                                                <div class="col-md-8">
-                                                    <input type="range" min="-180" v-model="j6" max="180" value="0"
-                                                        class="slider mt-2" />
-                                                </div>
-                                            </div>
-                                            <div class="input-group mb-2 mt-2">
+                                            <hr>
+                                            <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text">Speed:</span>
                                                 </div>
                                                 <input class="col-md-2 form-control" v-model="speed" max="100" min="1"
-                                                    type="number" step="0.01" />
+                                                    type="number" />
                                                 <div class="col-md-8">
                                                     <input type="range" min="1" v-model="speed" max="100"
                                                         class="slider2 mt-2" />
                                                 </div>
                                             </div>
-
-
-                                            <hr>
-                                            <div class="row m-2">
+                                            <div class="row mt-2">
                                                 <div class="col-md-8 col-sm-12">
                                                     <div class="input-group  ">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text">Title:</span>
                                                         </div>
                                                         <input class="form-control mr-1" v-model="title" />
-
-
-                                                        <!-- </div>
-                                            <div class="input-group mb-2"> -->
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text">Delay(s):</span>
-                                                        </div>
-                                                        <input class=" form-control" v-model="delay" max="60" min="0"
-                                                            type="number" />
 
                                                     </div>
                                                 </div>
@@ -437,6 +523,9 @@
                                     </div>
                                 </div>
                             </div>
+
+
+
                         </div>
                     </div>
 
@@ -529,7 +618,7 @@
                                                 ondragover="dragover('storedata')" v-for="(x,index) in store">
                                                 <td>{{index+1}}</td>
                                                 <td>{{x.type}}</td>
-                                                <td v-if="x.type == 'Arm'">
+                                                <td v-if="x.type == 'Arm Angles'">
 
                                                     <table id="nestedtable">
                                                         <tr draggable="false">
@@ -542,7 +631,7 @@
                                                             <th>Joint5</th>
                                                             <th>Joint6</th>
                                                             <th>Speed</th>
-                                                            <th>Delay</th>
+                                                            <!-- <th>Delay</th> -->
                                                         </tr>
                                                         <tr draggable="false">
                                                             <td>{{x.value.title}}</td>
@@ -553,7 +642,28 @@
                                                             <td>{{x.value.joint5}}</td>
                                                             <td>{{x.value.joint6}}</td>
                                                             <td>{{x.value.speed}}</td>
-                                                            <td>{{x.value.delay}}</td>
+                                                        </tr>
+                                                    </table>
+
+
+                                                </td>
+                                                <td v-if="x.type == 'Arm Coordinates'">
+
+                                                    <table id="nestedtable">
+                                                        <tr draggable="false">
+
+                                                            <th>Title</th>
+                                                            <th>Axis X</th>
+                                                            <th>Axis Y</th>
+                                                            <th>Axis Z</th>
+                                                            <th>Speed</th>
+                                                        </tr>
+                                                        <tr draggable="false">
+                                                            <td>{{x.value.title}}</td>
+                                                            <td>{{x.value.axisx}}</td>
+                                                            <td>{{x.value.axisy}}</td>
+                                                            <td>{{x.value.axisz}}</td>
+                                                            <td>{{x.value.speed}}</td>
                                                         </tr>
                                                     </table>
 
@@ -574,8 +684,8 @@
 
                                                 </td>
                                                 <td>
-                                                    <button  
-                                                        onclick="deleteActiveRow(this,'storedata')"
+                                                    <!-- @click="Delete(index)" -->
+                                                    <button onclick="deleteActiveRow(this,'storedata')"
                                                         class="btn btn-sm btn-danger Icon40 deleteIcon"></button>
                                                     <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
 
@@ -711,7 +821,7 @@
 
                                                 <button data-name="action" data-toggle="modal" data-target="#myModal"
                                                     @click="modal(x.name)"
-                                                    class="callModal btn btn-sm btn-info ml-1 Icon40 listIcon"></button>
+                                                    class="callModal btn btn-sm btn-info ml-3 Icon40 listIcon"></button>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -766,7 +876,7 @@
                                     <tr v-for="(x,index) in store">
                                         <td>{{index+1}}</td>
                                         <td>{{x.type}}</td>
-                                        <td v-if="x.type == 'Arm'">
+                                        <td v-if="x.type == 'Arm Angles'">
 
                                             <table id="nestedtable">
                                                 <tr draggable="false">
@@ -779,24 +889,45 @@
                                                     <th>Joint5</th>
                                                     <th>Joint6</th>
                                                     <th>Speed</th>
-                                                    <th>Delay</th>
+                                                    <!-- <th>Delay</th> -->
                                                 </tr>
                                                 <tr draggable="false">
                                                     <td>{{x.value.title}}</td>
-                                                    <td>{{x.value.joint1}}</td>
-                                                    <td>{{x.value.joint2}}</td>
-                                                    <td>{{x.value.joint3}}</td>
-                                                    <td>{{x.value.joint4}}</td>
-                                                    <td>{{x.value.joint5}}</td>
-                                                    <td>{{x.value.joint6}}</td>
+                                                    <td>{{x.value.joint1}}°</td>
+                                                    <td>{{x.value.joint2}}°</td>
+                                                    <td>{{x.value.joint3}}°</td>
+                                                    <td>{{x.value.joint4}}°</td>
+                                                    <td>{{x.value.joint5}}°</td>
+                                                    <td>{{x.value.joint6}}°</td>
                                                     <td>{{x.value.speed}}</td>
-                                                    <td>{{x.value.delay}}</td>
+                                                    <!-- <td>{{x.value.delay}}</td> -->
                                                 </tr>
                                             </table>
 
 
                                         </td>
+                                        <td v-if="x.type == 'Arm Coordinates'">
 
+                                            <table id="nestedtable">
+                                                <tr draggable="false">
+
+                                                    <th>Title</th>
+                                                    <th>Axis X</th>
+                                                    <th>Axis Y</th>
+                                                    <th>Axis Z</th>
+                                                    <th>Speed</th>
+                                                </tr>
+                                                <tr draggable="false">
+                                                    <td>{{x.value.title}}</td>
+                                                    <td>{{x.value.axisx}} m</td>
+                                                    <td>{{x.value.axisy}} m</td>
+                                                    <td>{{x.value.axisz}} m</td>
+                                                    <td>{{x.value.speed}}</td>
+                                                </tr>
+                                            </table>
+
+
+                                        </td>
                                         <td v-if="x.type == 'LED'">
                                             {{x.value.reapet}}
 
@@ -934,110 +1065,83 @@
 
                             <div class="row text-center">
                                 <div class="col-md-4">
-                                    <button @click="j1--; send()" class="border no-border btn btn-warning">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
-                                            fill="currentColor" class="bi bi-arrow-counterclockwise"
-                                            viewBox="0 0 16 16">
-                                            <path fill-rule="evenodd"
-                                                d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2z" />
-                                            <path
-                                                d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466" />
-                                        </svg>
-                                    </button>
-                                    <br>
+                                    <strong>Speed: {{keyboardSpeed*100}}</strong>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="range" min="0.01" v-model="keyboardSpeed" max="1" value="0.5"
+                                        class="slider mt-2" step="0.01" />
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row text-center ">
+                                <div class="col-md-4">
                                     <strong>Z</strong>
+                                    <button @click="keyValue='z'; moveByKey()"
+                                        class="border no-border btn btn-warning  Icon64  counterclockwiseIcon ml-2">
+                                    </button>
+
 
                                 </div>
 
-                                <div class="col-md-4 mt-3">
+                                <div class="col-md-4 mt-1">
                                     <strong>Joint 1</strong>
                                     <br>
-                                    <span>{{j1}} °</span>
+                                    <span>{{cposition.Joint1.toFixed(2)}} °</span>
                                 </div>
                                 <div class="col-md-4">
-                                    <button @click="j1++; send()" class="border no-border btn btn-danger"><svg
-                                            xmlns="http://www.w3.org/2000/svg" width="32" height="32"
-                                            fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
-                                            <path fill-rule="evenodd"
-                                                d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z" />
-                                            <path
-                                                d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466" />
-                                        </svg></button>
-                                    <br>
+                                    <button @click="keyValue='x'; moveByKey()"
+                                        class="border no-border btn btn-danger Icon64  clockwiseIcon mr-2"></button>
+
                                     <strong>X</strong>
                                 </div>
                             </div>
 
-
-
                             <hr>
-                            <div class="row text-center ">
+
+                            <div class="row text-center">
                                 <div class="col-md-4">
-                                    <button @click="j2--; send()" class="border no-border btn btn-warning">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
-                                            fill="currentColor" class="bi bi-arrow-counterclockwise"
-                                            viewBox="0 0 16 16">
-                                            <path fill-rule="evenodd"
-                                                d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2z" />
-                                            <path
-                                                d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466" />
-                                        </svg>
-                                    </button>
-                                    <br>
                                     <strong>A</strong>
+                                    <button @click="keyValue='a'; moveByKey()"
+                                        class="border no-border btn btn-warning  Icon64  counterclockwiseIcon ml-2">
+                                    </button>
+
+
                                 </div>
-                                <div class="col-md-4 mt-3">
+
+                                <div class="col-md-4 mt-1">
                                     <strong>Joint 2</strong>
                                     <br>
-                                    <span>{{j2}} °</span>
+                                    <span>{{cposition.Joint2.toFixed(2)}} °</span>
                                 </div>
                                 <div class="col-md-4">
-                                    <button @click="j2++; send()" class="border no-border btn btn-danger"><svg
-                                            xmlns="http://www.w3.org/2000/svg" width="32" height="32"
-                                            fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
-                                            <path fill-rule="evenodd"
-                                                d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z" />
-                                            <path
-                                                d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466" />
-                                        </svg></button>
-                                    <br>
+                                    <button @click="keyValue='s'; moveByKey()"
+                                        class="border no-border btn btn-danger Icon64  clockwiseIcon mr-2"></button>
+
                                     <strong>S</strong>
                                 </div>
                             </div>
 
 
-
                             <hr>
-                            <div class="row text-center ">
+                            <div class="row text-center">
                                 <div class="col-md-4">
-                                    <button @click="j3--; send()" class="border no-border btn btn-warning">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
-                                            fill="currentColor" class="bi bi-arrow-counterclockwise"
-                                            viewBox="0 0 16 16">
-                                            <path fill-rule="evenodd"
-                                                d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2z" />
-                                            <path
-                                                d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466" />
-                                        </svg>
-                                    </button>
-                                    <br>
                                     <strong>Q</strong>
+                                    <button @click="keyValue='q'; moveByKey()"
+                                        class="border no-border btn btn-warning  Icon64  counterclockwiseIcon ml-2">
+                                    </button>
+
+
                                 </div>
-                                <div class="col-md-4 mt-3">
+
+                                <div class="col-md-4 mt-1">
                                     <strong>Joint 3</strong>
                                     <br>
-                                    <span>{{j3}} °</span>
+                                    <span>{{cposition.Joint3.toFixed(2)}} °</span>
                                 </div>
                                 <div class="col-md-4">
-                                    <button @click="j3++; send()" class="border no-border btn btn-danger"><svg
-                                            xmlns="http://www.w3.org/2000/svg" width="32" height="32"
-                                            fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
-                                            <path fill-rule="evenodd"
-                                                d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z" />
-                                            <path
-                                                d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466" />
-                                        </svg></button>
-                                    <br>
+                                    <button @click="keyValue='w'; moveByKey()"
+                                        class="border no-border btn btn-danger Icon64  clockwiseIcon mr-2"></button>
+
                                     <strong>W</strong>
                                 </div>
                             </div>
@@ -1045,73 +1149,49 @@
 
                             <hr>
                             <div class="row text-center">
-
                                 <div class="col-md-4">
-                                    <button @click="j4--; send()" class="border no-border btn btn-warning">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
-                                            fill="currentColor" class="bi bi-arrow-counterclockwise"
-                                            viewBox="0 0 16 16">
-                                            <path fill-rule="evenodd"
-                                                d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2z" />
-                                            <path
-                                                d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466" />
-                                        </svg>
-                                    </button>
-                                    <br>
                                     <strong>N</strong>
+                                    <button @click="keyValue='n'; moveByKey()"
+                                        class="border no-border btn btn-warning  Icon64  counterclockwiseIcon ml-2">
+                                    </button>
+
+
                                 </div>
-                                <div class="col-md-4 mt-2">
+
+                                <div class="col-md-4 mt-1">
                                     <strong>Joint 4</strong>
                                     <br>
-                                    <span>{{j4}} °</span>
+                                    <span>{{cposition.Joint4.toFixed(2)}} °</span>
                                 </div>
                                 <div class="col-md-4">
-                                    <button @click="j4++; send()" class="border no-border btn btn-danger"><svg
-                                            xmlns="http://www.w3.org/2000/svg" width="32" height="32"
-                                            fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
-                                            <path fill-rule="evenodd"
-                                                d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z" />
-                                            <path
-                                                d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466" />
-                                        </svg></button>
-                                    <br>
+                                    <button @click="keyValue='m'; moveByKey()"
+                                        class="border no-border btn btn-danger Icon64  clockwiseIcon mr-2"></button>
+
                                     <strong>M</strong>
                                 </div>
                             </div>
 
 
                             <hr>
-                            <div class="row text-center ">
-
+                            <div class="row text-center">
                                 <div class="col-md-4">
-                                    <button @click="j5--; send()" class="border no-border btn btn-warning">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
-                                            fill="currentColor" class="bi bi-arrow-counterclockwise"
-                                            viewBox="0 0 16 16">
-                                            <path fill-rule="evenodd"
-                                                d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2z" />
-                                            <path
-                                                d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466" />
-                                        </svg>
-                                    </button>
-                                    <br>
                                     <strong>K</strong>
+                                    <button @click="keyValue='k'; moveByKey()"
+                                        class="border no-border btn btn-warning  Icon64  counterclockwiseIcon ml-2">
+                                    </button>
+
+
                                 </div>
-                                <div class="col-md-4 mt-3">
+
+                                <div class="col-md-4 mt-1">
                                     <strong>Joint 5</strong>
                                     <br>
-                                    <span>{{j5}} °</span>
+                                    <span>{{cposition.Joint5.toFixed(2)}} °</span>
                                 </div>
                                 <div class="col-md-4">
-                                    <button @click="j5++; send()" class="border no-border btn btn-danger"><svg
-                                            xmlns="http://www.w3.org/2000/svg" width="32" height="32"
-                                            fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
-                                            <path fill-rule="evenodd"
-                                                d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z" />
-                                            <path
-                                                d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466" />
-                                        </svg></button>
-                                    <br>
+                                    <button @click="keyValue='l'; moveByKey()"
+                                        class="border no-border btn btn-danger Icon64  clockwiseIcon mr-2"></button>
+
                                     <strong>L</strong>
                                 </div>
                             </div>
@@ -1119,36 +1199,21 @@
 
                             <hr>
                             <div class="row text-center ">
-
                                 <div class="col-md-4">
-                                    <button @click="j6--; send()" class="border no-border btn btn-warning">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
-                                            fill="currentColor" class="bi bi-arrow-counterclockwise"
-                                            viewBox="0 0 16 16">
-                                            <path fill-rule="evenodd"
-                                                d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2z" />
-                                            <path
-                                                d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466" />
-                                        </svg>
-                                    </button>
-                                    <br>
                                     <strong>O</strong>
+                                    <button @click="keyValue='o'; moveByKey()"
+                                        class="border no-border btn btn-warning  Icon64  counterclockwiseIcon ml-2">
+                                    </button>
                                 </div>
-                                <div class="col-md-4 mt-3">
+
+                                <div class="col-md-4 mt-1">
                                     <strong>Joint 6</strong>
                                     <br>
-                                    <span>{{j6}} °</span>
+                                    <span>{{cposition.Joint6.toFixed(2)}} °</span>
                                 </div>
                                 <div class="col-md-4">
-                                    <button @click="j6++; send()" class="border no-border btn btn-danger"><svg
-                                            xmlns="http://www.w3.org/2000/svg" width="32" height="32"
-                                            fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
-                                            <path fill-rule="evenodd"
-                                                d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z" />
-                                            <path
-                                                d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466" />
-                                        </svg></button>
-                                    <br>
+                                    <button @click="keyValue='p'; moveByKey()"
+                                        class="border no-border btn btn-danger Icon64  clockwiseIcon mr-2"></button>
                                     <strong>P</strong>
                                 </div>
                             </div>
@@ -1166,6 +1231,137 @@
             </div>
         </div>
 
+
+        <div class="modal fade row" id="myModalkeyboardrun2">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">Move</h4>
+                        <button type="button" class="close" data-dismiss="modal">×</button>
+                    </div>
+
+                    <!-- Modal body -->
+                    <div class="modal-body" v-on:keydown="getKey">
+                        <div class=" text-center">
+                            <div class="row text-center">
+                                <div class="col-md-4 text-left">
+                                    <strong>Increse Size: </strong>{{increasSize}} m
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="range" min="0.01" v-model="increasSize" max="1" value="0.1"
+                                        class="slider mt-2" step="0.01" />
+                                </div>
+                            </div>
+                            <div class="row text-center mt-2">
+                                <div class="col-md-4 text-left">
+                                    <strong> Select Link:</strong>
+                                </div>
+                                <div class="form-check col-md-4">
+
+                                    <input type="radio" id="one" value="arm_link" v-model="selectedlink" />
+                                    &nbsp; <label for="one">Arm Link</label>
+                                </div>
+                                <div class="form-check  col-md-4">
+                                    <input type="radio" id="two" value="j6_Link" v-model="selectedlink" />
+                                    &nbsp; <label for="two">J6 Link</label>
+                                </div>
+
+                                <!-- <div class="col-md-2"></ّdiv> -->
+                            </div>
+                            <hr>
+                            <div class="row text-center ">
+                                <div class="col-md-4">
+                                    <strong> X-AXIS</strong>
+                                </div>
+                                <div class="col-md-4">
+                                    <button @click="keyValue='ArrowUp'; moveByKey()"
+                                        class="border no-border btn btn-warning  Icon64  arrowUpIcon ml-2">
+                                    </button>
+
+
+                                </div>
+
+                                <!-- <div class="col-md-4 mt-1">
+                                    <strong>Joint 1</strong>
+                                    <br>
+                                    <span>{{cposition.Joint1}} °</span>
+                                </div> -->
+                                <div class="col-md-4">
+                                    <button @click="keyValue='ArrowDown'; moveByKey()"
+                                        class="border no-border btn btn-danger Icon64  arrowDownIcon mr-2"></button>
+
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <div class="row text-center">
+                                <div class="col-md-4">
+                                    <strong> Y-AXIS</strong>
+                                </div>
+                                <div class="col-md-4">
+                                    <button @click="keyValue='ArrowLeft'; moveByKey()"
+                                        class="border no-border btn btn-warning  Icon64  arrowLeftIcon ml-2">
+                                    </button>
+
+
+                                </div>
+
+                                <!-- <div class="col-md-4 mt-1">
+                                    <strong>Joint 2</strong>
+                                    <br>
+                                    <span>{{cposition.Joint2}} °</span>
+                                </div> -->
+                                <div class="col-md-4">
+                                    <button @click="keyValue='ArrowRight'; moveByKey()"
+                                        class="border no-border btn btn-danger Icon64  arrowRightIcon mr-2"></button>
+
+                                </div>
+                            </div>
+
+
+                            <hr>
+                            <div class="row text-center">
+                                <div class="col-md-4">
+                                    <strong> Z-AXIS</strong>
+                                </div>
+                                <div class="col-md-4">
+                                    <button @click="keyValue='-'; moveByKey()"
+                                        class="border no-border btn btn-warning  Icon64   ml-2">-
+                                    </button>
+
+
+                                </div>
+
+                                <!-- <div class="col-md-4 mt-1">
+                                    <strong>Joint 3</strong>
+                                    <br>
+                                    <span>{{cposition.Joint3}} °</span>
+                                </div> -->
+                                <div class="col-md-4">
+                                    <button @click="keyValue='+'; moveByKey()"
+                                        class="border no-border btn btn-danger Icon64  plusIcon mr-2"></button>
+
+                                </div>
+                            </div>
+
+
+
+
+
+                        </div>
+                    </div>
+
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
 
 
 
@@ -1196,7 +1392,7 @@
 
         var script = document.createElement('script');
         script.type = 'text/javascript';
-        script.src = 'script/main.js?v=4.' + Date.now();
+        script.src = 'script/mainMoveit.js?v=4.' + Date.now();
         document.head.appendChild(script);
 
 
@@ -1434,9 +1630,10 @@
 
                 var temp = {};
                 let value = tableRow.cells[2].innerHTML
-                // console.log(value)
+                <!-- // console.log(value) -->
                 switch (tableRow.cells[1].innerHTML) {
-                    case "Arm":
+                    case "Arm Angles":
+                    case "Arm Coordinates":
                         // const myArray = value.split("::");               
                         // temp["title"]  = myArray[0];
                         // temp["joint1"] = myArray[1];
@@ -1462,6 +1659,9 @@
                         //console.log(data);
                         rowData["value"] = data[0];
                         break;
+
+
+
                     case "LED":
                         temp["reapet"] = value;
                         rowData["value"] = temp;
@@ -1566,7 +1766,7 @@
 
     </script>
 
-
+    <!-- <script src="pwa.js"></script>   -->
 </body>
 
 </html>

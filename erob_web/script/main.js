@@ -6,7 +6,7 @@ const app = Vue.createApp({
             // ros connection
             ros: null,
             config: true,
-            rosbridge_address: 'ws://192.168.1.69:9090/',
+            rosbridge_address: 'ws://192.168.1.82:9090/',
             connected: false,
             error: false,
             actuatorDone: true,
@@ -79,6 +79,7 @@ const app = Vue.createApp({
             this.ros.on('close', () => {
                 this.connected = false
                 console.log('Connection to ROSBridge was closed!')
+                document.getElementById('divCamera').innerHTML = ''
             })
             this.showData()
 
@@ -148,6 +149,14 @@ const app = Vue.createApp({
             });
 
             cmdVel.publish(msg);
+           
+            // this.j1 = Math.round(this.cposition.Joint1);
+            // this.j2 = Math.round(this.cposition.Joint2);
+            // this.j3 = Math.round(this.cposition.Joint3);
+            // this.j4 = Math.round(this.cposition.Joint4);
+            // this.j5 = Math.round(this.cposition.Joint5);
+            // this.j6 = Math.round(this.cposition.Joint6);
+            // this.send();
         },
         Disengage: function () {
             var cmdVel = new ROSLIB.Topic({
@@ -178,7 +187,7 @@ const app = Vue.createApp({
 
 
         Delete: function (index) {
-           console.log(index)
+            console.log(index)
             // this.store.splice(this.store.indexOf(index), 1);  
             this.store.splice(index, 1);
             localStorage.setItem(this.catTitle, JSON.stringify(this.store));
@@ -190,17 +199,17 @@ const app = Vue.createApp({
         },
         docycle: async function () {
             this.store = JSON.parse(localStorage.getItem(this.catTitle));
-            
+
             let data = this.store;
             this.Operate(data)
         },
         doOperations: async function () {
             this.catList = JSON.parse(localStorage.getItem('catlist'));
-            // console.log(this.catList[0])
+            // console.log(this.catList)
             let run = []
             for (item in this.catList) {
                 let data = JSON.parse(localStorage.getItem(this.catList[item].name));
-                
+
                 for (pos in data) {
                     run.push(data[pos])
                 }
@@ -210,7 +219,7 @@ const app = Vue.createApp({
 
         },
 
-      
+
         Operate: async function (data) {
             // console.log(data)
             localStorage.setItem("RUN", JSON.stringify(data));
@@ -232,9 +241,14 @@ const app = Vue.createApp({
             while (command[pos].type == "Arm") {
                 // if (this.ArmRunning == false) {
                 this.sendWithTarget(command[pos].value)
+                let k = 0;
                 while (!this.reach(command[pos])) {
                     await this.sleep(500)
                     console.log('wait')
+                    k++;
+                    if (k == 6) {
+                        this.sendWithTarget(command[pos].value)
+                    }
                 }
 
                 // while (this.ArmRunning == true) {
@@ -324,7 +338,7 @@ const app = Vue.createApp({
                 }
                 else {
                     this.ArmRunning = false;
-                    
+
                 }
                 // console.log(message)
                 // this.actuatorDone=  message.data.includes(this.serial_msg)
@@ -412,7 +426,7 @@ const app = Vue.createApp({
                 return false;
             if (Math.round(this.cposition.Joint6) != target.value.joint6)
                 return false;
-            
+
             return true;
         },
         sleep: function (milliseconds) {
@@ -434,7 +448,7 @@ const app = Vue.createApp({
         showPosition: function () {
             var listener = new ROSLIB.Topic({
                 ros: this.ros,
-                name: "/arm/state",
+                name: "/arm/state", // /joint_states
                 messageType: "sensor_msgs/msg/JointState",
             });
             listener.subscribe((message) => {
@@ -475,7 +489,7 @@ const app = Vue.createApp({
                 messageType: "sensor_msgs/msg/JointState",
             });
 
-           
+
 
             // rj1 = (this.j1 * Math.PI) / 180;
             // rj2 = (this.j2 * Math.PI) / 180;
@@ -483,20 +497,26 @@ const app = Vue.createApp({
             // rj4 = (this.j4 * Math.PI) / 180;
             // rj5 = (this.j5 * Math.PI) / 180;
             // rj6 = (this.j6 * Math.PI) / 180;
+            rj1 = this.j1 * 1;
+            rj2 = this.j2 * 1;
+            rj3 = this.j3 * 1;
+            rj4 = this.j4 * 1;
+            rj5 = this.j5 * 1;
+            rj6 = this.j6 * 1;
 
             let newspeed = this.speed * 10;
             let newspeed2 = this.speed * 10;
             var JointState = new ROSLIB.Message({
                 name: ["j1", "j2", "j3", "j4", "j5", "j6"],
-                // position: [rj1, rj2, rj3, rj4, rj5, rj6],
-                position: [this.j1, this.j2, this.j3, this.j4, this.j5, this.j6],
+                position: [rj1, rj2, rj3, rj4, rj5, rj6],
+                // position: [parseInt(this.j1), parseInt(this.j2), parseInt(this.j3), parseInt(this.j4), parseInt(this.j5), parseInt(this.j6)],
                 velocity: [newspeed2, newspeed2, newspeed2, newspeed, newspeed, newspeed],
                 effort: [],
             });
             console.log(JointState)
             cmdVel.publish(JointState);
 
-            this.addItem()
+            // this.addItem()
 
         },
         sendWithTarget: function (target) {
@@ -549,11 +569,11 @@ const app = Vue.createApp({
             this.keyValue = evt.key
             console.log(evt.key)
             // this.speed = 25
-            this.speed=10
+            this.speed = 10
             switch (this.keyValue.toLowerCase()) {
-                case 'z' :
+                case 'z':
                     this.j1--;
-                    
+
                     this.send()
                     break;
                 case 'x':
@@ -704,8 +724,6 @@ const app = Vue.createApp({
 
             this.store = JSON.parse(localStorage.getItem(name));
         },
-
-
 
 
     },
