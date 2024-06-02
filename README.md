@@ -2,18 +2,18 @@
 
 # Ways to run:
 ## `ros2 launch`
- - cd into workspace `cd /home/arol6/arm2_ws/`
- - source workspace `source ./install/setup/bash`
- - launch the package `ros2 launch erob_pkg test.launch.py`
+ - cd into workspace `$ cd /home/arol6/arm2_ws/`
+ - source workspace `$ source ./install/setup/bash`
+ - launch the package `$ ros2 launch erob_pkg test.launch.py`
 
 ## `sudo su`
- - Enter `sudo su` into a terminal
- - cd into workspace `cd /home/arol6/arm2_ws/`
- - source workspace `source ./install/setup/bash`
- - run the node `ros2 run erob_pkg erob_node`
+ - Enter `$ sudo su` into a terminal
+ - cd into workspace `$ cd /home/arol6/arm2_ws/`
+ - source workspace `$ source ./install/setup/bash`
+ - run the node `$ ros2 run erob_pkg erob_node`
 
-# Notes
-- The file */etc/sudoers* was modified to allow current user (**arol6**) to invoke `sudo` without password prompt
+### Notes
+- The file ***/etc/sudoers*** was modified to allow current user (**arol6**) to invoke `sudo` without password prompt
   - To modify/read, enter into terminal `sudo visudo`
 
 
@@ -21,8 +21,8 @@
 
 
 
-
-# The following command will disable GUI on boot hence upon the reboot the system will boot into multi user target:
+# Disable GUI
+## The following command will disable GUI on boot hence upon the reboot the system will boot into multi user target:
   - `$ sudo systemctl set-default multi-user`
 
 ## Reboot or log out from a current session to exit GUI:
@@ -40,7 +40,7 @@ For a GNOME GUI installations using GDM as a default display manager you can sta
 
 
 # Multi Terminals
-Use alt+ctrl+[F1-F12] to open defferent terminal
+Use `alt+ctrl+[F1-F12]` to open defferent terminal
 
 
 
