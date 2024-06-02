@@ -12,9 +12,11 @@
  - source workspace `$ source ./install/setup/bash`
  - run the node `$ ros2 run erob_pkg erob_node`
 
-### Notes
-- The file ***/etc/sudoers*** was modified to allow current user (**arol6**) to invoke `sudo` without password prompt
-  - To modify/read, enter into terminal `sudo visudo`
+> [!NOTE]
+> The file ***/etc/sudoers*** was modified to allow current user (**arol6**) to invoke `sudo` without password prompt.
+
+> [!TIP]
+> To modify/read, enter into terminal `sudo visudo`
 
 
 
